@@ -10,7 +10,7 @@
 #include <string.h>
 
 /* ===== DEFINES ===== */
-#define MAX_WIDTH 85
+#define MAX_WIDTH 80
 #define FUMO_COUNT 2
 enum fumo_who {Reimu, Patchy};
 
@@ -24,6 +24,7 @@ void helpInfo() {
          "Fumos are characters from Touhou Project.");
 }
 
+// todo: move to own file
 void fumofumo(enum fumo_who fm) {
   switch (fm) {
   case Reimu:
@@ -106,14 +107,14 @@ size_t longestLineWidth(int argc, char **argv) {
   size_t cur_line = 0;
   size_t max_line = 0;
   for (int i = 0; i < argc; i++) {
-    size_t word_len = strlen(argv[i]);
+    size_t word_len = strlen(argv[i]) + 1;
     // if word is longer than max, return max
     if (word_len > MAX_WIDTH) {
       return MAX_WIDTH;
     }
-    if (cur_line + word_len + 1 < MAX_WIDTH) {
+    if (cur_line + word_len < MAX_WIDTH) {
       // add this word
-      cur_line += word_len + 1;
+      cur_line += word_len;
       max_line = MAX(cur_line, max_line);
     } else {
       // count a new line
@@ -142,11 +143,11 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
     }
 
     // word fits
-    if (cur_line + word_len <= MAX_WIDTH) {
+    if (cur_line + word_len <= bubble_size) {
       printf("%s ", argv[i]);
-      // terminate line if maxed
-      if (cur_line + word_len == MAX_WIDTH) {
-        paddedBreak(bubble_size - cur_line - word_len);
+      // terminate line if at max length
+      if (cur_line + word_len == bubble_size) {
+        paddedBreak(0);
         cur_line = 0;
         continue;
       }
@@ -157,18 +158,19 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
       }
       continue;
     }
-    // word doesn't fit
+    // word doesn't fit this line
     // break if line isn't empty
     if (cur_line > 0) {
       paddedBreak(bubble_size - cur_line);
       printf("( ");
     }
+    // now we're in a new line
     if (word_len > MAX_WIDTH) {
       // word is too long for a single line
       char *word = argv[i];
       size_t out = 0;
-      for (int j = 0; j < word_len / MAX_WIDTH; j++) {
-        size_t len = MIN(MAX_WIDTH, strlen(word));
+      for (int j = 0; j <= word_len / MAX_WIDTH; j++) {
+        size_t len = MIN(MAX_WIDTH - 1 /* leave a blank for looks */, strlen(word));
         printf("%.*s", (int)len, word);
         paddedBreak(bubble_size - len);
         word += len;
@@ -180,7 +182,6 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
       }
       cur_line = 0;
     } else {
-      // word fits
       printf("%s ", argv[i]);
       cur_line = word_len;
       if (cur_line == MAX_WIDTH || i == argc - 1) {
