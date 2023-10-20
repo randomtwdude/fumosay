@@ -10,8 +10,8 @@
 #include <string.h>
 
 /* ===== DEFINES ===== */
-#define MAX_WIDTH 80
 #define FUMO_COUNT 2
+int MAX_WIDTH = 80;
 enum fumo_who {Reimu, Patchy};
 
 /* ===== FUNCTIONS ===== */
@@ -19,9 +19,21 @@ enum fumo_who {Reimu, Patchy};
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("Usage: fumosay [-h] *message*\n"
+  printf("Usage: fumosay [-h] [-W column] *message*\n"
+         "-W     Specifies roughly where the message should be wrapped.\n"
+         "       The default is 80.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
-         "Fumos are characters from Touhou Project.");
+         "Fumos are characters from Touhou Project.\n");
+}
+
+// string to number
+int numberize(char *c) {
+  long number = strtol(c, (char **)NULL, 0);
+  if (number == 0) {
+    fprintf(stderr, "Invalid parameter: %s", c);
+    exit(EXIT_FAILURE);
+  }
+  return (int)number;
 }
 
 // todo: move to own file
@@ -135,6 +147,7 @@ void paddedBreak(int padding) {
 void printMessage(int argc, char **argv, size_t bubble_size) {
   size_t cur_line = 0;
   for (int i = 0; i < argc; i++) {
+
     size_t word_len = strlen(argv[i]) + 1;
 
     // left edge
@@ -165,12 +178,12 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
       printf("( ");
     }
     // now we're in a new line
-    if (word_len > MAX_WIDTH) {
+    if (word_len > bubble_size) {
       // word is too long for a single line
       char *word = argv[i];
       size_t out = 0;
-      for (int j = 0; j <= word_len / MAX_WIDTH; j++) {
-        size_t len = MIN(MAX_WIDTH - 1 /* leave a blank for looks */, strlen(word));
+      for (int j = 0;; j++) {
+        size_t len = MIN(bubble_size - 1 /* leave a blank for looks */, strlen(word));
         printf("%.*s", (int)len, word);
         paddedBreak(bubble_size - len);
         word += len;
@@ -184,8 +197,9 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
     } else {
       printf("%s ", argv[i]);
       cur_line = word_len;
-      if (cur_line == MAX_WIDTH || i == argc - 1) {
+      if (cur_line == bubble_size || i == argc - 1) {
         paddedBreak(bubble_size - cur_line);
+        cur_line = 0;
       }
     }
   }
@@ -201,14 +215,21 @@ int main(int argc, char **argv) {
   srand(time(NULL));
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "h")) != -1) {
+  while ((opt = getopt(argc, argv, "hW:")) != -1) {
     switch (opt) {
     case 'h':
       helpInfo();
       exit(EXIT_SUCCESS);
+    case 'W':
+      MAX_WIDTH = numberize(optarg);
+      if (MAX_WIDTH < 2) {
+        printf("The fumos hath spoken: Width must be at least 2!\n");
+        exit(EXIT_FAILURE);
+      }
+      break;
     }
   }
-  size_t bubble_width = longestLineWidth(argc - 1, argv + 1) + 1;
+  size_t bubble_width = longestLineWidth(argc - optind, argv + optind) + 1;
   // top line
   printf(" ");
   for (int i = 0; i < bubble_width; i++) {
@@ -216,7 +237,7 @@ int main(int argc, char **argv) {
   }
   printf("\n");
   // message
-  printMessage(argc - 1, argv + 1, bubble_width - 1);
+  printMessage(argc - optind, argv + optind, bubble_width - 1);
   // bottom line
   printf(" ");
   for (int i = 0; i < bubble_width; i++) {
