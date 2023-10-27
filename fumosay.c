@@ -19,7 +19,8 @@ enum fumo_who {Reimu, Patchy};
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("Usage: fumosay [-h] [-W column] *message*\n"
+  printf("=== fumosay ver. 0.3 ===\n"
+         "Usage: fumosay [-h] [-W column] *message*\n"
          "-W     Specifies roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
@@ -34,6 +35,36 @@ int numberize(char *c) {
     exit(EXIT_FAILURE);
   }
   return (int)number;
+}
+
+// get one word
+char *getInput(FILE *st, size_t size) {
+  char *str;
+  int ch;
+  size_t len = 0;
+  str = realloc(NULL, sizeof(*str) * size);
+  if (!str) {
+    return str;
+  }
+  while (1) {
+    ch = fgetc(st);
+    if (ch == EOF || ch == '\n' || ch == ' ') {
+      if (ch != EOF && len == 0) {
+        continue; // ignore
+      } else {
+        break; // end token
+      }
+    }
+    str[len++] = ch;
+    if (len == size) {
+      str = realloc(str, sizeof(*str) * (size += 16));
+      if (!str) {
+        return str;
+      }
+    }
+  }
+  str[len++] = '\0';
+  return realloc(str, sizeof(*str) * len);
 }
 
 // todo: move to own file
@@ -72,8 +103,7 @@ void fumofumo(enum fumo_who fm) {
                             *^             @. *.
                                           =    @.
                                          @      @
-                                        #@@-__-@@#
-    )", stdout);
+                                        #@@-__-@@#)", stdout);
     break;
   case Patchy:
     fputs(R"(
@@ -108,8 +138,7 @@ void fumofumo(enum fumo_who fm) {
                  *   ,+ @@ *__-+     **=@ * @=**   @  .,# @@ +_   @
                   +*#  +  +             *   *       **=  +  +  =**
                        @  @             @-_-@            @  @
-                        ##                                ##
-    )", stdout);
+                        ##                                ##)", stdout);
     break;
   }
 }
@@ -206,11 +235,6 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
 }
 
 int main(int argc, char **argv) {
-  // parse arguments
-  if (argc == 1) {
-    helpInfo();
-    exit(EXIT_SUCCESS);
-  }
   // random init
   srand(time(NULL));
   // argument
@@ -229,7 +253,25 @@ int main(int argc, char **argv) {
       break;
     }
   }
-  size_t bubble_width = longestLineWidth(argc - optind, argv + optind) + 1;
+  int word_count = 0;
+  char **word_vector = realloc(NULL, sizeof(char *));
+  if (optind == argc) {
+    // read from stdin instead
+    while (1) {
+      char *token;
+      token = getInput(stdin, 10);
+      if (strlen(token) == 0) {
+        break;
+      }
+      word_vector[word_count++] = token;
+      word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
+    }
+    word_vector = realloc(word_vector, word_count * sizeof(char *));
+  } else {
+    word_count = argc - optind;
+    word_vector = argv + optind;
+  }
+  size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
   // top line
   printf(" ");
   for (int i = 0; i < bubble_width; i++) {
@@ -237,7 +279,7 @@ int main(int argc, char **argv) {
   }
   printf("\n");
   // message
-  printMessage(argc - optind, argv + optind, bubble_width - 1);
+  printMessage(word_count, word_vector, bubble_width - 1);
   // bottom line
   printf(" ");
   for (int i = 0; i < bubble_width; i++) {
