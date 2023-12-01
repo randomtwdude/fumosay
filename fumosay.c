@@ -142,6 +142,7 @@ size_t longestLineWidth(int argc, char **argv) {
   return max_line;
 }
 
+// print some spaces and the right line
 void paddedBreak(int padding) {
   for (int i = 0; i < padding; i++) {
     printf(" ");
@@ -154,7 +155,6 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
   bool line_break = false;
 
   for (int i = 0; i < argc; i++) {
-
 
     line_break = false;
     size_t word_len = strlen(argv[i]) + 1;
@@ -271,12 +271,22 @@ int main(int argc, char **argv) {
   if (optind == argc) {
     // read from stdin instead
     if (no_wrap) {
-      char *token = NULL;
-      size_t line;
-      while (getline(&token, &line, stdin) > -1) {
+      char *buffer = NULL;
+      size_t buf_line;
+      while (getline(&buffer, &buf_line, stdin) > -1) {
+        char *token;
+        size_t line;
+        FILE *st = open_memstream(&token, &line);
+        for (int i = 0; i < buf_line; i++) {
+          if (buffer[i] == 9) {
+            fprintf(st, "    ");
+          } else {
+            fprintf(st, "%c", buffer[i]);
+          }
+        }
+        fflush(st);
         word_vector[word_count++] = token;
         word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
-        token = malloc(120 /* some reasonable numbers */);
       }
       word_vector = realloc(word_vector, word_count * sizeof(char *));
     } else {
@@ -297,17 +307,17 @@ int main(int argc, char **argv) {
   }
   size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
   // top line
-  printf(" ");
+  fputc(' ', stdout);
   for (int i = 0; i < bubble_width; i++) {
-    printf("_");
+    fputc('_', stdout);
   }
-  printf("\n");
+  fputc('\n', stdout);
   // message
   printMessage(word_count, word_vector, bubble_width - 1);
   // bottom line
-  printf(" ");
+  fputc(' ', stdout);
   for (int i = 0; i < bubble_width; i++) {
-    printf("-");
+    fputc('-', stdout);
   }
   // fumo
   enum fumo_who fm = rand() % FUMO_COUNT;
