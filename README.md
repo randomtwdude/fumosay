@@ -11,7 +11,7 @@ Written in the spirit of funkyness.
 - cowsay  
   We should have all the cowsay features now (except the customization part), yay! We just need more fumos...
 - fumos  
-  We now have 4 fumos! Meet Reimu, Marisa, Patchy and Flandre in your terminal of choice.
+  We now have 6 fumos! Meet Reimu, Marisa, Patchy, Flandre, Joon, and Koishi in your terminal of choice.
 
 ## Updates
 More or less frequent updates. See [changelog](changelog.md).
