@@ -1,6 +1,6 @@
-// fumosay
+// -- fumosay v0.5 --
 // like cowsay, but with funky fumos!
-// fairly barebones for now, more updates to come.
+// Tagline of the version: Mystia's Izakaya is a great game.
 
 /* ===== INCLUDES ===== */
 #include <math.h>
@@ -12,20 +12,21 @@
 #include <stdbool.h>
 
 /* ===== DEFINES ===== */
-#define FUMO_COUNT 4
+#define FUMO_COUNT 6
 int MAX_WIDTH = 80;
-enum fumo_who {Reimu, Patchy, Marisa, Flandre};
+enum fumo_who {Reimu, Patchy, Marisa, Flandre, Joon, Koishi};
 
 /* ===== FUNCTIONS ===== */
 #define MIN(a,b) (a > b ? b : a)
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("=== fumosay ver. 0.4 ===\n"
-         "Usage: fumosay [-hn] [-W column] *message*\n"
+  printf("=== fumosay ver. 0.5 ===\n"
+         "Usage: fumosay [-hn] [-W column] [-f character] (message)\n"
          "-n     Disables word-wrapping.\n"
          "-W     Specifies roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
+         "-f     Pick a fumo.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos are characters from Touhou Project.\n");
 }
@@ -38,6 +39,30 @@ int numberize(char *c) {
     exit(EXIT_FAILURE);
   }
   return (int)number;
+}
+
+// pick a fumo
+int fumo_picker(char *str) {
+  char f = str[0];
+  if (f == 'r' || f == 'R') {
+    return Reimu;
+  }
+  if (f == 'p' || f == 'P') {
+    return Patchy;
+  }
+  if (f == 'm' || f == 'M') {
+    return Marisa;
+  }
+  if (f == 'f' || f == 'F') {
+    return Flandre;
+  }
+  if (f == 'j' || f == 'J') {
+    return Joon;
+  }
+  if (f == 'k' || f == 'K') {
+    return Koishi;
+  }
+  return -1;
 }
 
 // get one word
@@ -100,6 +125,12 @@ void fumofumo(enum fumo_who fm) {
   case Flandre:
     fputs(flandre, stdout);
     break;
+  case Joon:
+    fputs(joon, stdout);
+    break;
+  case Koishi:
+    fputs(koishi, stdout);
+    break;
   }
 }
 
@@ -142,7 +173,7 @@ size_t longestLineWidth(int argc, char **argv) {
   return max_line;
 }
 
-// print some spaces and the right line
+// print some spaces and the right parenthesis
 void paddedBreak(int padding) {
   for (int i = 0; i < padding; i++) {
     printf(" ");
@@ -150,6 +181,8 @@ void paddedBreak(int padding) {
   printf(")\n");
 }
 
+// greedy algorithm
+// TODO: use something better
 void printMessage(int argc, char **argv, size_t bubble_size) {
   size_t cur_line = 0;
   bool line_break = false;
@@ -246,9 +279,10 @@ int main(int argc, char **argv) {
   // random init
   srand(time(NULL));
   bool no_wrap = false;
+  enum fumo_who fm = -1;
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hnW:")) != -1) {
+  while ((opt = getopt(argc, argv, "hnW:f:")) != -1) {
     switch (opt) {
     case 'h':
       helpInfo();
@@ -264,7 +298,13 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
       }
       break;
-    }
+    case 'f':
+      fm = fumo_picker(optarg);
+      if (fm == -1) {
+        printf("Fumo \"%s\" is not here! Choosing randomly...\n", optarg);
+      }
+      break;
+    } // switch
   }
   int word_count = 0;
   char **word_vector = realloc(NULL, sizeof(char *));
@@ -320,7 +360,9 @@ int main(int argc, char **argv) {
     fputc('-', stdout);
   }
   // fumo
-  enum fumo_who fm = rand() % FUMO_COUNT;
+  if (fm == -1) {
+    fm = rand() % FUMO_COUNT;
+  }
   fumofumo(fm);
   // bye
   return 0;
