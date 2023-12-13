@@ -1,4 +1,4 @@
-// -- fumosay v0.5 --
+// -- fumosay v0.6 --
 // like cowsay, but with funky fumos!
 // Tagline of the version: Mystia's Izakaya is a great game.
 
@@ -12,23 +12,38 @@
 #include <stdbool.h>
 
 /* ===== DEFINES ===== */
-#define FUMO_COUNT 6
+#define FUMO_COUNT 8
 int MAX_WIDTH = 80;
-enum fumo_who {Reimu, Patchy, Marisa, Flandre, Joon, Koishi};
+// for some enum to string actions
+#define FUMOS(FUMO)                                                     \
+        FUMO(Reimu) FUMO(Patchy) FUMO(Marisa) FUMO(Flandre)             \
+        FUMO(Joon)  FUMO(Koishi) FUMO(Kaguya) FUMO(Mokou)
+
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
+enum fumo_who { FUMOS(GENERATE_ENUM) };
+static const char *FUMO_STRING[] = { FUMOS(GENERATE_STRING) };
+
+#define COLOR(r,g,b) "\033[38;2;" #r ";" #g ";" #b "m"
+#define RESET_COLOR "\033[0m"
 
 /* ===== FUNCTIONS ===== */
 #define MIN(a,b) (a > b ? b : a)
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("=== fumosay ver. 0.5 ===\n"
-         "Usage: fumosay [-hn] [-W column] [-f character] (message)\n"
+  printf("=== fumosay ver. 0.6 ===\n"
+         "Usage: fumosay [-hngc] [-W column] [-f character] (message)\n"
          "-n     Disables word-wrapping.\n"
          "-W     Specifies roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
-         "-f     Pick a fumo.\n"
+         "       This option is ignored with -n.\n"
+         "-f     Pick a fumo by name.\n"
+         "-g     Displays the character's name above the text box like a story game.\n"
+         "-c     Adds colours to the text.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
-         "Fumos are characters from Touhou Project.\n");
+         "Fumos are characters from Touhou Project.");
 }
 
 // string to number
@@ -39,30 +54,6 @@ int numberize(char *c) {
     exit(EXIT_FAILURE);
   }
   return (int)number;
-}
-
-// pick a fumo
-int fumo_picker(char *str) {
-  char f = str[0];
-  if (f == 'r' || f == 'R') {
-    return Reimu;
-  }
-  if (f == 'p' || f == 'P') {
-    return Patchy;
-  }
-  if (f == 'm' || f == 'M') {
-    return Marisa;
-  }
-  if (f == 'f' || f == 'F') {
-    return Flandre;
-  }
-  if (f == 'j' || f == 'J') {
-    return Joon;
-  }
-  if (f == 'k' || f == 'K') {
-    return Koishi;
-  }
-  return -1;
 }
 
 // get one word
@@ -109,6 +100,74 @@ char *getInput(FILE *st, size_t size) {
   return realloc(str, sizeof(*str) * len);
 }
 
+// pick a fumo
+int fumo_picker(char *str) {
+  char f = str[0];
+  if (f == 'r' || f == 'R') {
+    return Reimu;
+  }
+  if (f == 'p' || f == 'P') {
+    return Patchy;
+  }
+  if (f == 'm' || f == 'M') {
+    if (strlen(str) < 2) {
+      return -1;
+    }
+    if (str[1] == 'a' || str[1] == 'A') {
+      return Marisa;
+    } else if (str[1] == 'o' || str[1] == 'O') {
+      return Mokou;
+    }
+  }
+  if (f == 'f' || f == 'F') {
+    return Flandre;
+  }
+  if (f == 'j' || f == 'J') {
+    return Joon;
+  }
+  if (f == 'k' || f == 'K') {
+    if (strlen(str) < 2) {
+      return -1;
+    }
+    if (str[1] == 'o' || str[1] == 'O') {
+      return Koishi;
+    } else if (str[1] == 'a' || str[1] == 'A') {
+      return Kaguya;
+    }
+  }
+  return -1;
+}
+
+// set a terminal color for each fumo
+void fumo_colour(enum fumo_who fm) {
+  switch (fm) {
+  case Reimu:
+    printf(COLOR(245,110,120));
+    break;
+  case Patchy:
+    printf(COLOR(175,115,240));
+    break;
+  case Marisa:
+    printf(COLOR(245,210,120));
+    break;
+  case Flandre:
+    printf(COLOR(245,120,145));
+    break;
+  case Joon:
+    printf(COLOR(240,120,240));
+    break;
+  case Koishi:
+    printf(COLOR(200,245,125));
+    break;
+  case Kaguya:
+    printf(COLOR(240,150,130));
+    break;
+  case Mokou:
+    printf(COLOR(245,100,100));
+    break;
+  }
+}
+
 #include "fumo.fumo"
 // fumo!
 void fumofumo(enum fumo_who fm) {
@@ -130,6 +189,12 @@ void fumofumo(enum fumo_who fm) {
     break;
   case Koishi:
     fputs(koishi, stdout);
+    break;
+  case Kaguya:
+    fputs(kaguya, stdout);
+    break;
+  case Mokou:
+    fputs(mokou, stdout);
     break;
   }
 }
@@ -275,37 +340,53 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
   } // for each word
 }
 
-int main(int argc, char **argv) {
-  // random init
-  srand(time(NULL));
-  bool no_wrap = false;
-  enum fumo_who fm = -1;
-  // argument
+// parse command line arguments
+void parseArgument(int argc, char **argv, bool *no_wrap,
+                   bool *display_name, bool *colour, enum fumo_who *fm) {
   char opt;
-  while ((opt = getopt(argc, argv, "hnW:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hngcW:f:")) != -1) {
     switch (opt) {
     case 'h':
       helpInfo();
       exit(EXIT_SUCCESS);
     case 'n':
       MAX_WIDTH = 100000000;
-      no_wrap = true;
+      *no_wrap = true;
       break;
     case 'W':
-      MAX_WIDTH = numberize(optarg);
-      if (MAX_WIDTH < 2) {
-        printf("The fumos hath spoken: Width must be at least 2!\n");
-        exit(EXIT_FAILURE);
-      }
+      MAX_WIDTH = *no_wrap ? MAX_WIDTH : numberize(optarg);
       break;
     case 'f':
-      fm = fumo_picker(optarg);
-      if (fm == -1) {
-        printf("Fumo \"%s\" is not here! Choosing randomly...\n", optarg);
+      *fm = fumo_picker(optarg);
+      if (*fm == -1) {
+        printf("\"%s\"??? Choosing randomly...\n", optarg);
       }
+      break;
+    case 'g':
+      *display_name = true;
+      break;
+    case 'c':
+      *colour = true;
       break;
     } // switch
   }
+}
+
+int main(int argc, char **argv) {
+  // random init
+  srand(time(NULL));
+  bool no_wrap = false;
+  bool display_name = false;
+  bool colour = false;
+  enum fumo_who fm = -1;
+  // argument
+  parseArgument(argc, argv, &no_wrap, &display_name, &colour, &fm);
+
+  if (MAX_WIDTH < 2) {
+    printf("The fumos say: Width must be at least 2!\n");
+    exit(EXIT_FAILURE);
+  }
+
   int word_count = 0;
   char **word_vector = realloc(NULL, sizeof(char *));
   if (optind == argc) {
@@ -345,7 +426,21 @@ int main(int argc, char **argv) {
     word_count = argc - optind;
     word_vector = argv + optind;
   }
+
   size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
+
+  // choose a fumo if not already chosen
+  if (fm == -1) {
+    fm = rand() % FUMO_COUNT;
+  }
+  // color
+  if (colour) {
+    fumo_colour(fm);
+  }
+  // CYOA mode
+  if (display_name) {
+    printf("%s says:\n", FUMO_STRING[fm]);
+  }
   // top line
   fputc(' ', stdout);
   for (int i = 0; i < bubble_width; i++) {
@@ -359,11 +454,11 @@ int main(int argc, char **argv) {
   for (int i = 0; i < bubble_width; i++) {
     fputc('-', stdout);
   }
-  // fumo
-  if (fm == -1) {
-    fm = rand() % FUMO_COUNT;
+  // reset color
+  if (colour) {
+    printf(RESET_COLOR);
   }
+  // fumo!
   fumofumo(fm);
-  // bye
   return 0;
 }

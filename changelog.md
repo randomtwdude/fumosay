@@ -1,3 +1,12 @@
+### v0.6 - 2023/12/13
+- Added `-g`<br>
+  Displays the name of the fumo at the top like it's a story game.
+- Added `-c`<br>
+  Colors the text the fumo says for some flair. (The fumo isn't colored.)<br>
+  Should work on most terminal emulators.
+- New fumofumos!<br>
+  Kaguya and Mokou have arrived, they won't kill each other here.
+
 ### v0.5 - 2023/12/08
 - Added `-f`<br>
   Pick a fumo you want. This isn't a real search, it just matches letters.
