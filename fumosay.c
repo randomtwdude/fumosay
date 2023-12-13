@@ -43,7 +43,7 @@ void helpInfo() {
          "-g     Displays the character's name above the text box like a story game.\n"
          "-c     Adds colours to the text.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
-         "Fumos are characters from Touhou Project.");
+         "Fumos are characters from Touhou Project.\n");
 }
 
 // string to number
