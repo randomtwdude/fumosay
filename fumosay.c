@@ -6,8 +6,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
+#include <time.h>
 #include <string.h>
 #include <stdbool.h>
 
@@ -61,39 +61,30 @@ char *getInput(FILE *st, size_t size) {
   char *str;
   int ch;
   size_t len = 0;
+  // allocate buffer
   str = realloc(NULL, sizeof(*str) * size);
   if (!str) {
     return str;
   }
-  while (1) {
-    ch = fgetc(st);
+  while ((ch = fgetc(st)) != EOF) {
     if (ch == ' ' || ch == 9 /* TAB */) {
       if (len) {
-        break;
+        break; // if we have a word, spaces terminate
       } else {
-        continue;
+        continue; // ignore consecutive spaces
       }
-    } else if (ch == '\n') {
-      str[len++] = ch;
-      if (len == size) {
-        str = realloc(str, sizeof(*str) * (size += 16));
-        if (!str) {
-          return str;
-        }
-      } // extend
-      break;
-    } else if (ch == EOF) {
-      break;
-    } // if
-
+    }
     // append new character
     str[len++] = ch;
-    // extend the string if necessary
+    // extend the buffer if necessary
     if (len == size) {
       str = realloc(str, sizeof(*str) * (size += 16));
       if (!str) {
         return str;
       }
+    }
+    if (ch == '\n') {
+      break;
     }
   } // while
   str[len++] = '\0';
@@ -341,8 +332,10 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
 }
 
 // parse command line arguments
-void parseArgument(int argc, char **argv, bool *no_wrap,
-                   bool *display_name, bool *colour, enum fumo_who *fm) {
+void parseArgument(
+  int argc, char **argv, bool *no_wrap,
+  bool *display_name, bool *colour, enum fumo_who *fm
+  ) {
   char opt;
   while ((opt = getopt(argc, argv, "hngcW:f:")) != -1) {
     switch (opt) {
@@ -373,12 +366,13 @@ void parseArgument(int argc, char **argv, bool *no_wrap,
 }
 
 int main(int argc, char **argv) {
-  // random init
+  // init
   srand(time(NULL));
   bool no_wrap = false;
   bool display_name = false;
   bool colour = false;
   enum fumo_who fm = -1;
+
   // argument
   parseArgument(argc, argv, &no_wrap, &display_name, &colour, &fm);
 
@@ -393,14 +387,13 @@ int main(int argc, char **argv) {
     // read from stdin instead
     if (no_wrap) {
       char *buffer = NULL;
-      size_t buf_line;
+      size_t buf_line, line;
       while (getline(&buffer, &buf_line, stdin) > -1) {
         char *token;
-        size_t line;
         FILE *st = open_memstream(&token, &line);
         for (int i = 0; i < buf_line; i++) {
           if (buffer[i] == 9) {
-            fprintf(st, "    ");
+            fprintf(st, "    "); // replace tab with 4 spaces
           } else {
             fprintf(st, "%c", buffer[i]);
           }
@@ -414,6 +407,10 @@ int main(int argc, char **argv) {
       while (1) {
         char *token;
         token = getInput(stdin, 10);
+        if (token == NULL) {
+          printf("Something has gone terribly wrong!\n");
+          exit(EXIT_FAILURE);
+        }
         if (strlen(token) == 0) {
           break;
         }
@@ -423,6 +420,7 @@ int main(int argc, char **argv) {
       word_vector = realloc(word_vector, word_count * sizeof(char *));
     }
   } else {
+    // read from cmd line
     word_count = argc - optind;
     word_vector = argv + optind;
   }
