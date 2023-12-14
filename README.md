@@ -22,6 +22,7 @@ More or less frequent updates. See [changelog](changelog.md).
 
 ## Compile
 `make`
+(only compiles with `gcc`)
 
 ## Use
 `./fumosay [message]` or pipe something in: `foo | ./fumosay`
