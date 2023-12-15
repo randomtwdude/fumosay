@@ -3,6 +3,7 @@
 // Tagline of the version: Mystia's Izakaya is a great game.
 
 /* ===== INCLUDES ===== */
+#include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,12 +13,20 @@
 #include <stdbool.h>
 
 /* ===== DEFINES ===== */
-#define FUMO_COUNT 8
 int MAX_WIDTH = 80;
-// for some enum to string actions
-#define FUMOS(FUMO)                                                     \
-        FUMO(Reimu) FUMO(Patchy) FUMO(Marisa) FUMO(Flandre)             \
-        FUMO(Joon)  FUMO(Koishi) FUMO(Kaguya) FUMO(Mokou)
+
+typedef struct color {
+  short R;
+  short G;
+  short B;
+} color;
+
+typedef struct fumo_data {
+  char *fumo;
+  color color;
+} fumo_data;
+
+#include "fumo.fumo"
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -25,7 +34,7 @@ int MAX_WIDTH = 80;
 enum fumo_who { FUMOS(GENERATE_ENUM) };
 static const char *FUMO_STRING[] = { FUMOS(GENERATE_STRING) };
 
-#define COLOR(r,g,b) "\033[38;2;" #r ";" #g ";" #b "m"
+#define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 #define RESET_COLOR "\033[0m"
 
 /* ===== FUNCTIONS ===== */
@@ -92,102 +101,41 @@ char *getInput(FILE *st, size_t size) {
 }
 
 // pick a fumo
-int fumo_picker(char *str) {
-  char f = str[0];
-  if (f == 'r' || f == 'R') {
-    return Reimu;
+enum fumo_who fumo_picker(char *str) {
+  // we want to compare the lower case version
+  for (int i = 0; i < strlen(str); i++) {
+    str[i] = tolower(str[i]);
   }
-  if (f == 'p' || f == 'P') {
+  enum fumo_who i = 0;
+  while (i < FUMO_COUNT) {
+    // lower case
+    char *fm = strdup(FUMO_STRING[i]);
+    fm[0] = tolower(fm[0]); // uncapitalize first character
+    if (strstr(str, fm) != NULL) {
+      free(fm);
+      break;
+    }
+    free(fm);
+    i++;
+  }
+  // I am not changing "Patchy" in the enum
+  if (strstr(str, "patchouli") != NULL) {
     return Patchy;
   }
-  if (f == 'm' || f == 'M') {
-    if (strlen(str) < 2) {
-      return -1;
-    }
-    if (str[1] == 'a' || str[1] == 'A') {
-      return Marisa;
-    } else if (str[1] == 'o' || str[1] == 'O') {
-      return Mokou;
-    }
+  if (i == FUMO_COUNT) {
+    return -1;
   }
-  if (f == 'f' || f == 'F') {
-    return Flandre;
-  }
-  if (f == 'j' || f == 'J') {
-    return Joon;
-  }
-  if (f == 'k' || f == 'K') {
-    if (strlen(str) < 2) {
-      return -1;
-    }
-    if (str[1] == 'o' || str[1] == 'O') {
-      return Koishi;
-    } else if (str[1] == 'a' || str[1] == 'A') {
-      return Kaguya;
-    }
-  }
-  return -1;
+  return i;
 }
 
-// set a terminal color for each fumo
+// set a font color for each fumo
 void fumo_colour(enum fumo_who fm) {
-  switch (fm) {
-  case Reimu:
-    printf(COLOR(245,110,120));
-    break;
-  case Patchy:
-    printf(COLOR(175,115,240));
-    break;
-  case Marisa:
-    printf(COLOR(245,210,120));
-    break;
-  case Flandre:
-    printf(COLOR(245,120,145));
-    break;
-  case Joon:
-    printf(COLOR(240,120,240));
-    break;
-  case Koishi:
-    printf(COLOR(200,245,125));
-    break;
-  case Kaguya:
-    printf(COLOR(240,150,130));
-    break;
-  case Mokou:
-    printf(COLOR(245,100,100));
-    break;
-  }
+  SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
 }
 
-#include "fumo.fumo"
 // fumo!
 void fumofumo(enum fumo_who fm) {
-  switch (fm) {
-  case Reimu:
-    fputs(reimu, stdout);
-    break;
-  case Patchy:
-    fputs(patchouli, stdout);
-    break;
-  case Marisa:
-    fputs(marisa, stdout);
-    break;
-  case Flandre:
-    fputs(flandre, stdout);
-    break;
-  case Joon:
-    fputs(joon, stdout);
-    break;
-  case Koishi:
-    fputs(koishi, stdout);
-    break;
-  case Kaguya:
-    fputs(kaguya, stdout);
-    break;
-  case Mokou:
-    fputs(mokou, stdout);
-    break;
-  }
+  fputs(FUMO_LIST[fm].fumo, stdout);
 }
 
 // returns length of longest line
@@ -331,40 +279,6 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
   } // for each word
 }
 
-// parse command line arguments
-void parseArgument(
-  int argc, char **argv, bool *no_wrap,
-  bool *display_name, bool *colour, enum fumo_who *fm
-  ) {
-  char opt;
-  while ((opt = getopt(argc, argv, "hngcW:f:")) != -1) {
-    switch (opt) {
-    case 'h':
-      helpInfo();
-      exit(EXIT_SUCCESS);
-    case 'n':
-      MAX_WIDTH = 100000000;
-      *no_wrap = true;
-      break;
-    case 'W':
-      MAX_WIDTH = *no_wrap ? MAX_WIDTH : numberize(optarg);
-      break;
-    case 'f':
-      *fm = fumo_picker(optarg);
-      if (*fm == -1) {
-        printf("\"%s\"??? Choosing randomly...\n", optarg);
-      }
-      break;
-    case 'g':
-      *display_name = true;
-      break;
-    case 'c':
-      *colour = true;
-      break;
-    } // switch
-  }
-}
-
 int main(int argc, char **argv) {
   // init
   srand(time(NULL));
@@ -374,7 +288,33 @@ int main(int argc, char **argv) {
   enum fumo_who fm = -1;
 
   // argument
-  parseArgument(argc, argv, &no_wrap, &display_name, &colour, &fm);
+  char opt;
+  while ((opt = getopt(argc, argv, "hngcW:f:")) != -1) {
+    switch (opt) {
+    case 'h':
+      helpInfo();
+      exit(EXIT_SUCCESS);
+    case 'n':
+      MAX_WIDTH = 100000000;
+      no_wrap = true;
+      break;
+    case 'W':
+      MAX_WIDTH = no_wrap ? MAX_WIDTH : numberize(optarg);
+      break;
+    case 'f':
+      fm = fumo_picker(optarg);
+      if (fm == -1) {
+        printf("\"%s\"??? Choosing randomly...\n", optarg);
+      }
+      break;
+    case 'g':
+      display_name = true;
+      break;
+    case 'c':
+      colour = true;
+      break;
+    } // switch
+  }
 
   if (MAX_WIDTH < 2) {
     printf("The fumos say: Width must be at least 2!\n");

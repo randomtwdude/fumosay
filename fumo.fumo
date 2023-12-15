@@ -1,7 +1,8 @@
 // Home of the fumos, say hi!
 // Drawn by me, with help from asciiart.eu
-// Add fumos here -> change FUMO_COUNT, enum fumo_who, fumofumo() and fumo_picker().
+// data about the fumos is AT THE END of this file, remember to add to it as well!
 
+/* ascii art section */
 // Hakurei Reimu
 static char reimu[] = R"fumo(
         \
@@ -302,3 +303,24 @@ static char mokou[] = R"fumo(
                              ^*-@__    *@*    __#--*      @*
                                    *--=====--*
 )fumo";
+
+/* data section */
+// number of fumos
+#define FUMO_COUNT 8
+
+// list of fumos
+#define FUMOS(FUMO)                                             \
+        FUMO(Reimu) FUMO(Patchy) FUMO(Marisa) FUMO(Flandre)     \
+        FUMO(Joon)  FUMO(Koishi) FUMO(Kaguya) FUMO(Mokou)
+
+// data of fumos
+fumo_data FUMO_LIST[FUMO_COUNT] = {
+  {reimu,     {245, 110, 120}},
+  {patchouli, {175, 115, 240}},
+  {marisa,    {245, 210, 120}},
+  {flandre,   {245, 120, 145}},
+  {joon,      {240, 120, 240}},
+  {koishi,    {200, 245, 125}},
+  {kaguya,    {240, 150, 130}},
+  {mokou,     {245, 100, 100}},
+};
