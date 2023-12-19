@@ -123,6 +123,9 @@ fumo_who fumo_picker(char *str) {
   if (strstr(str, "remi") != NULL) {
     return 10;
   }
+  if (strstr(str, "snae") != NULL) {
+    return 11;
+  }
   // end
   if (i == FUMO_COUNT) {
     return -1;
