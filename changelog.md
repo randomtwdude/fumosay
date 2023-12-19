@@ -1,3 +1,17 @@
+### v0.7 - 2023/12/19
+- Added `-l`<br>
+  Lists all available fumos.
+- New fumofumos!<br>
+  Introducing the Underworld -- Saigyouji Yuyuko & Konpaku Youmu,<br>
+  the senior vampire -- Remilia Scarlet,<br>
+  and the other shrine maiden -- Kochiya Sanae!
+- Art tweaks<br>
+  Kaguya and Patchouli received slight tweaks.
+- Technical changes:<br>
+  All fumo related data is now in `fumo.fumo` for easier access.<br>
+  Cleaner code.<br>
+  Added a license.
+
 ### v0.6 - 2023/12/13
 - Added `-g`<br>
   Displays the name of the fumo at the top like it's a story game.

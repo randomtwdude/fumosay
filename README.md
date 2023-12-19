@@ -9,24 +9,41 @@ Written in the spirit of funkyness.
 
 ## Features
 - cowsay<br>
-  All the cowsay (except the customization part), yay! We just need more fumos...
+  All the cowsay features (except the customization part, for now...), yay!
 - fumos<br>
-  We now have 8 fumos! Meet Reimu, Marisa, Patchy, Flandre, Joon, Koishi, Kaguya and Mokou in your terminal of choice.
+  12 adorable fumos come to your terminal!
 - colors<br>
   Add some simple colors to the text for extra flair.
 
+## Fumos
 The fumos are designed with the font Cascadia Code.
+
+<details>
+  <summary>List of all available fumos!</summary>
+
+  - Hakurei Reimu
+  - Patchouli Knowledge
+  - Kirisame Marisa
+  - Flandre Scarlet
+  - Yorigami Joon
+  - Komeiji Koishi
+  - Houraisan Kaguya
+  - Fujiwara no Mokou
+  - Saigyouji Yuyuko
+  - Konpaku Youmu
+  - Remilia Scarlet
+  - Kochiya Sanae
+</details>
 
 ## Updates
 More or less frequent updates. See [changelog](changelog.md).
 
 ## Compile
-`make`
-(only compiles with `gcc`)
+`make`<br>
+Portability: fumosay uses UNIX features and GNU extensions of C.
 
 ## Use
-`./fumosay [message]` or pipe something in: `foo | ./fumosay`
-
+`./fumosay [message]` or pipe something in: `foo | ./fumosay`<br>
 For help, `./fumosay -h`.
 
 Have fun.

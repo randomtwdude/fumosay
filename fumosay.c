@@ -1,6 +1,6 @@
-// -- fumosay v0.6 --
+// -- fumosay v0.7 --
 // like cowsay, but with funky fumos!
-// Tagline of the version: Mystia's Izakaya is a great game.
+// O' Great Reimu, please let me pass the course.
 
 /* ===== INCLUDES ===== */
 #include <ctype.h>
@@ -16,23 +16,19 @@
 int MAX_WIDTH = 80;
 
 typedef struct color {
-  short R;
-  short G;
-  short B;
+  short R; short G; short B;
 } color;
 
 typedef struct fumo_data {
-  char *fumo;
+  char  *fumo; // fumo ascii art
+  char  *name; // display name
   color color;
 } fumo_data;
 
+typedef int fumo_who;
+
+// fumo file
 #include "fumo.fumo"
-
-#define GENERATE_ENUM(ENUM) ENUM,
-#define GENERATE_STRING(STRING) #STRING,
-
-enum fumo_who { FUMOS(GENERATE_ENUM) };
-static const char *FUMO_STRING[] = { FUMOS(GENERATE_STRING) };
 
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 #define RESET_COLOR "\033[0m"
@@ -42,8 +38,10 @@ static const char *FUMO_STRING[] = { FUMOS(GENERATE_STRING) };
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("=== fumosay ver. 0.6 ===\n"
-         "Usage: fumosay [-hngc] [-W column] [-f character] (message)\n"
+  printf("=== fumosay ver. 0.7 ===\n"
+         "Usage: fumosay [-hlngc] [-W column] [-f character] (message)\n"
+         "-h     Displays this message.\n"
+         "-l     Lists all fumos.\n"
          "-n     Disables word-wrapping.\n"
          "-W     Specifies roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
@@ -52,7 +50,7 @@ void helpInfo() {
          "-g     Displays the character's name above the text box like a story game.\n"
          "-c     Adds colours to the text.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
-         "Fumos are characters from Touhou Project.\n");
+         "Fumos feature characters from Touhou Project.\n");
 }
 
 // string to number
@@ -101,15 +99,15 @@ char *getInput(FILE *st, size_t size) {
 }
 
 // pick a fumo
-enum fumo_who fumo_picker(char *str) {
+fumo_who fumo_picker(char *str) {
   // we want to compare the lower case version
   for (int i = 0; i < strlen(str); i++) {
     str[i] = tolower(str[i]);
   }
-  enum fumo_who i = 0;
+  fumo_who i = 0;
   while (i < FUMO_COUNT) {
     // lower case
-    char *fm = strdup(FUMO_STRING[i]);
+    char *fm = strdup(FUMO_LIST[i].name);
     fm[0] = tolower(fm[0]); // uncapitalize first character
     if (strstr(str, fm) != NULL) {
       free(fm);
@@ -118,10 +116,14 @@ enum fumo_who fumo_picker(char *str) {
     free(fm);
     i++;
   }
-  // I am not changing "Patchy" in the enum
+  // alternate names
   if (strstr(str, "patchouli") != NULL) {
-    return Patchy;
+    return 1;
   }
+  if (strstr(str, "remi") != NULL) {
+    return 10;
+  }
+  // end
   if (i == FUMO_COUNT) {
     return -1;
   }
@@ -129,12 +131,20 @@ enum fumo_who fumo_picker(char *str) {
 }
 
 // set a font color for each fumo
-void fumo_colour(enum fumo_who fm) {
+void fumo_colour(fumo_who fm) {
   SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
 }
 
+// lists fumos
+void fumo_list() {
+  printf("There are %d fumos!\n-----\n", FUMO_COUNT);
+  for (int i = 0; i < FUMO_COUNT; i++) {
+    puts(FUMO_LIST[i].name);
+  }
+}
+
 // fumo!
-void fumofumo(enum fumo_who fm) {
+void fumofumo(fumo_who fm) {
   fputs(FUMO_LIST[fm].fumo, stdout);
 }
 
@@ -285,14 +295,17 @@ int main(int argc, char **argv) {
   bool no_wrap = false;
   bool display_name = false;
   bool colour = false;
-  enum fumo_who fm = -1;
+  fumo_who fm = -1;
 
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hngcW:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hlngcW:f:")) != -1) {
     switch (opt) {
     case 'h':
       helpInfo();
+      exit(EXIT_SUCCESS);
+    case 'l':
+      fumo_list();
       exit(EXIT_SUCCESS);
     case 'n':
       MAX_WIDTH = 100000000;
@@ -377,7 +390,7 @@ int main(int argc, char **argv) {
   }
   // CYOA mode
   if (display_name) {
-    printf("%s says:\n", FUMO_STRING[fm]);
+    printf("%s says:\n", FUMO_LIST[fm].name);
   }
   // top line
   fputc(' ', stdout);
