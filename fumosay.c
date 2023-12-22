@@ -106,8 +106,7 @@ fumo_who fumo_picker(char *str) {
   }
   fumo_who i = 0;
   while (i < FUMO_COUNT) {
-    // lower case
-    char *fm = strdup(FUMO_LIST[i].name);
+    char *fm = strdup(FUMO_LIST[i].name); // lower case
     fm[0] = tolower(fm[0]); // uncapitalize first character
     if (strstr(str, fm) != NULL) {
       free(fm);
@@ -116,21 +115,58 @@ fumo_who fumo_picker(char *str) {
     free(fm);
     i++;
   }
-  // alternate names
-  if (strstr(str, "patchouli") != NULL) {
-    return 1;
-  }
-  if (strstr(str, "remi") != NULL) {
-    return 10;
-  }
-  if (strstr(str, "snae") != NULL) {
-    return 11;
-  }
   // end
   if (i == FUMO_COUNT) {
+    // alternate names
+    if (strstr(str, "patchy") != NULL) {
+      return 1;
+    }
+    if (strstr(str, "remi") != NULL) {
+      return 10;
+    }
+    if (strstr(str, "snae") != NULL) {
+      return 11;
+    }
     return -1;
   }
   return i;
+}
+
+// set fumo expression
+void fumo_expr(fumo_who fm, char ex) {
+  char *p;
+  short count = 0;
+
+  #define set_expression(x) {                           \
+    while (count < 3) {                                 \
+      p = strchr(FUMO_LIST[fm].fumo, 'E');              \
+      if (!p) {                                         \
+        return;                                         \
+      }                                                 \
+      memmove(p++, EXPRESSIONS[x] + (8 * count++), 8);  \
+    }                                                   \
+  }
+
+  switch (ex) {
+  case '1':
+    set_expression(0); break;
+  case '2':
+    set_expression(1); break;
+  case '3':
+    set_expression(2); break;
+  case '4':
+    set_expression(3); break;
+  case 'v':
+    set_expression(4); break;
+  case '0': /* default expression */
+    while (count < 3) {
+      p = strchr(FUMO_LIST[fm].fumo, 'E');
+      if (!p) {
+        return;
+      }
+      memmove(p++, " ", 1);
+    }
+  }
 }
 
 // set a font color for each fumo
@@ -298,11 +334,12 @@ int main(int argc, char **argv) {
   bool no_wrap = false;
   bool display_name = false;
   bool colour = false;
+  char expr = 0;
   fumo_who fm = -1;
 
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hlngcW:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hlngcE:W:f:")) != -1) {
     switch (opt) {
     case 'h':
       helpInfo();
@@ -328,6 +365,9 @@ int main(int argc, char **argv) {
       break;
     case 'c':
       colour = true;
+      break;
+    case 'E':
+      expr = optarg[0];
       break;
     } // switch
   }
@@ -386,6 +426,12 @@ int main(int argc, char **argv) {
   // choose a fumo if not already chosen
   if (fm == -1) {
     fm = rand() % FUMO_COUNT;
+  }
+  // expression
+  if (expr) {
+    fumo_expr(fm, expr);
+  } else {
+    fumo_expr(fm, '0'); // default
   }
   // color
   if (colour) {
