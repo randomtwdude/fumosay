@@ -7,7 +7,7 @@ Merry Christmas! In festive times like this, every fumo deserves a smile...<br>
   | preset | description |
   | ------ | ----------- |
   |  `1`   | frowny :(   |
-  |  `2`   | meh :|      |
+  |  `2`   | meh :\|      |
   |  `3`   | smile :)    |
   |  `4`   | big smile   |
   |  `v`   | vampire!    |
