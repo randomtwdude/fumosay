@@ -1,0 +1,72 @@
+.TH fumosay 1 "2023 Dec 24" "version 0.8"
+.SH NAME
+fumosay - funky talking fumofumos
+
+.SH SYNOPSIS
+fumosay
+.BI "[-hlngc] [-W " "column" "] [-f " "name" "] [-E " "expression" "]"
+
+.SH EXAMPLES
+.IP "fumosay Hello world!"
+.IP "fortune | fumosay -c -f alice -E 3"
+Have Alice Margatroid read out the output of fortune, with colored text and a smile.
+
+.SH DESCRIPTION
+.I fumosay 
+draws an ASCII art of a FumoFumo plushie saying something the user provided. If no message is in the command line, fumos will read from standard input. They will word-wrap the message at 80 columns and print it out on standard output.
+
+.SH OPTIONS
+.TP
+.B -l
+List the name of all available fumos.
+.TP
+.B -n
+Disable word-wrapping, preserving white-spaces and line breaks. Allowing the fumo to say another fumo.
+.TP
+.B -g
+Display a simple prompt at the top of the message, like a video game dialogue.
+.TP
+.B -c
+Color the text.
+.TP
+.BR "-W " "column"
+Specify where the message should be word-wrapped, the default is 80. This option is
+.I ignored 
+.RB "if " "-n " "is set."
+.TP
+.BR "-f " "name"
+Specify a specific fumo (by first name) to read your message.
+.TP
+.BR "-E " "expression"
+Set an alternate expression (mouth string) for the fumo. You may choose a preset from the following or specify your own custom expression.
+.RS
+.br
+\'1\' - frowny ; 
+\'2\' - neutral ; 
+\'3\' - smile ; 
+\'4\' - bigger smile ; 
+\'v\' - little vampire sister ;
+\'w\' - lucky bunny
+.PP
+To specify a custom expression, enter anything longer than one character. The first 24 characters of the input will be used, if fewer than 24 characters is given, it will be padded by spaces. The 24 characters will be split into 3 separate lines of 8 characters each. The center of each line is located at the 5th position out of 8. The following example produces a 3-wide smile in the middle of line 2. There are 11 leading spaces.
+.sp
+fumosay -E "           *_*"
+.RE
+.TP
+.B -h
+Display help message.
+
+.SH ADDING FUMOS
+The quote-unquote configuration file "fumo.fumo" is really just C code with instructions. You can add new fumos to it and recompile fumosay.
+
+.SH BUGS
+ANSI escape sequences will make the text bubble misaligned.
+
+.SH SEE ALSO
+.IR "cowsay" "(1), " "FORTUNE" "(6)"
+.sp
+The FumoFumos are adorably soft friendly plushies featuring characters from Touhou Project, made by Gift!
+.br
+The ASCII arts are created with help from the tool of asciiart.eu.
+.br
+fumosay is inspired by Tony Monroe's cowsay.

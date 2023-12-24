@@ -8,11 +8,11 @@ Written in the spirit of funkyness.
 <img src="https://github.com/randomtwdude/fumosay/assets/105645765/390b9eba-9e0d-4e73-82ff-80d998aabd29" width=750>
 
 ## Features
-- cowsay<br>
-  All the cowsay features (except the customization part, for now...), yay!
-- fumos<br>
-  12 adorable fumos come to your terminal!
-- colors<br>
+- Fumos!<br>
+  16 adorable fumos come to your terminal!
+- Expressions!<br>
+  Have you seen Patchouli smiling like a gremlin?
+- Colors!<br>
   Add some simple colors to the text for extra flair.
 
 ## Fumos
@@ -33,6 +33,10 @@ The fumos are designed with the font Cascadia Code.
   - Konpaku Youmu
   - Remilia Scarlet
   - Kochiya Sanae
+  - Inaba Tewi
+  - Yakumo Yukari
+  - Komeiji Satori
+  - Alice Margatroid
 </details>
 
 ## Updates
@@ -45,7 +49,8 @@ Portability: fumosay uses UNIX features and GNU extensions of C.
 ## Use
 `./fumosay [message]` or pipe something in: `foo | ./fumosay`<br>
 For help, `./fumosay -h`.
+Man page now available.
 
-Have fun.
+Have fun!
 
 > The contents of this program may not reflect the true personal views of the characters featured.

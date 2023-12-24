@@ -1,3 +1,25 @@
+### v0.8 - 2023/12/24
+Merry Christmas! In festive times like this, every fumo deserves a smile...<br>
+> Try options `-f patchy -E w` for an incredibly derpy Patchouli :p
+- Added `-E`<br>
+  Finally, a unique feature of fumosay! Now, even the most grumpy fumos can smile like a carefree baka.<br>
+  You may choose a one-letter preset from the following:
+  | preset | description |
+  | ------ | ----------- |
+  |  `1`   | frowny :(   |
+  |  `2`   | meh :|      |
+  |  `3`   | smile :)    |
+  |  `4`   | big smile   |
+  |  `v`   | vampire!    |
+  |  `w`   | bnuuy www   |
+  Or specify your own by giving a string longer than 1 character, the first 24 characters will be split into 3 lines in the fumo.<br>
+  Each line is 8 characters, with the center generally in the 5th position. Shorter inputs are automatically padded to length with whitespaces.
+- Added a manual page with examples, you can view it with `man ./fumosay.1`.
+- New fumofumos!<br>
+  Bunny Tewi, Yukari, Satori, and Alice!
+- Technical changes:<br>
+  The first three occurences of `E` in fumo arts are now reserved for the new expression feature.
+
 ### v0.7 - 2023/12/19
 - Added `-l`<br>
   Lists all available fumos.

@@ -1,4 +1,4 @@
-// -- fumosay v0.7 --
+// -- fumosay v0.8 --
 // like cowsay, but with funky fumos!
 // O' Great Reimu, please let me pass the course.
 
@@ -31,24 +31,26 @@ typedef int fumo_who;
 #include "fumo.fumo"
 
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
-#define RESET_COLOR "\033[0m"
+#define RESET_COLOR printf("\033[0m");
 
 /* ===== FUNCTIONS ===== */
 #define MIN(a,b) (a > b ? b : a)
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo() {
-  printf("=== fumosay ver. 0.7 ===\n"
-         "Usage: fumosay [-hlngc] [-W column] [-f character] (message)\n"
-         "-h     Displays this message.\n"
-         "-l     Lists all fumos.\n"
-         "-n     Disables word-wrapping.\n"
-         "-W     Specifies roughly where the message should be wrapped.\n"
+  printf("=== fumosay ver. 0.8 ===\n"
+         "Usage: fumosay [-hlngc] [-W column] [-f name] [-E expression] (message)\n"
+         "-l     List all fumos.\n"
+         "-n     Disable word-wrapping. Overrides -W.\n"
+         "-W     Specify roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
-         "       This option is ignored with -n.\n"
          "-f     Pick a fumo by name.\n"
-         "-g     Displays the character's name above the text box like a story game.\n"
-         "-c     Adds colours to the text.\n"
+         "-E     Change the expression (mouth) of the fumo.\n"
+         "       Use a one-letter preset below or enter your own!\n"
+         "       Presets: '1', '2', '3', '4', 'v', 'w'\n"
+         "-g     Display the character's name above the text box like a story game.\n"
+         "-c     Color the text.\n"
+         "-h     Display this message.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project.\n");
 }
@@ -118,32 +120,47 @@ fumo_who fumo_picker(char *str) {
   // end
   if (i == FUMO_COUNT) {
     // alternate names
-    if (strstr(str, "patchy") != NULL) {
-      return 1;
+    #define check_name(name, id) {          \
+      if (strstr(str, #name) != NULL) {     \
+        return id;                          \
+      }                                     \
     }
-    if (strstr(str, "remi") != NULL) {
-      return 10;
-    }
-    if (strstr(str, "snae") != NULL) {
-      return 11;
-    }
+
+    check_name(patchy, 1);
+    check_name(remi, 10);
+    check_name(snae, 11);
+    check_name(gap, 13);
+
     return -1;
   }
   return i;
 }
 
 // set fumo expression
-void fumo_expr(fumo_who fm, char ex) {
+void fumo_expr(fumo_who fm, char ex, char *custom) {
   char *p;
   short count = 0;
 
+  // use custom expression
+  if (custom[0] != 0) {
+    while (count < 3) {
+      p = strchr(FUMO_LIST[fm].fumo, 'E');
+      if (!p) {
+        return;
+      }
+      memmove(p, custom + (8 * count++), 8);
+    }
+    return;
+  }
+
+  // use presets
   #define set_expression(x) {                           \
     while (count < 3) {                                 \
       p = strchr(FUMO_LIST[fm].fumo, 'E');              \
       if (!p) {                                         \
         return;                                         \
       }                                                 \
-      memmove(p++, EXPRESSIONS[x] + (8 * count++), 8);  \
+      memmove(p, EXPRESSIONS[x] + (8 * count++), 8);    \
     }                                                   \
   }
 
@@ -158,20 +175,18 @@ void fumo_expr(fumo_who fm, char ex) {
     set_expression(3); break;
   case 'v':
     set_expression(4); break;
-  case '0': /* default expression */
+  case 'w':
+    set_expression(5); break;
+  default:
     while (count < 3) {
       p = strchr(FUMO_LIST[fm].fumo, 'E');
       if (!p) {
         return;
       }
-      memmove(p++, " ", 1);
+      *p = ' ';
     }
   }
-}
-
-// set a font color for each fumo
-void fumo_colour(fumo_who fm) {
-  SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+  #undef set_expression
 }
 
 // lists fumos
@@ -335,6 +350,7 @@ int main(int argc, char **argv) {
   bool display_name = false;
   bool colour = false;
   char expr = 0;
+  char custom_expr[30] = {0};
   fumo_who fm = -1;
 
   // argument
@@ -367,7 +383,18 @@ int main(int argc, char **argv) {
       colour = true;
       break;
     case 'E':
-      expr = optarg[0];
+      int optlen = strlen(optarg);
+      if (optlen > 1) {
+        // use custom expression
+        short padding = 24 - strlen(optarg);
+        if (padding < 0) {
+          padding = optarg[24] = 0; // ensure non-negative padding & truncate string
+        }
+        sprintf(custom_expr, "%s%.*s", optarg,
+                padding, "                              ");
+      } else {
+        expr = optarg[0];
+      }
       break;
     } // switch
   }
@@ -403,7 +430,7 @@ int main(int argc, char **argv) {
       while (1) {
         char *token;
         token = getInput(stdin, 10);
-        if (token == NULL) {
+        if (!token) {
           printf("Something has gone terribly wrong!\n");
           exit(EXIT_FAILURE);
         }
@@ -428,14 +455,10 @@ int main(int argc, char **argv) {
     fm = rand() % FUMO_COUNT;
   }
   // expression
-  if (expr) {
-    fumo_expr(fm, expr);
-  } else {
-    fumo_expr(fm, '0'); // default
-  }
+  fumo_expr(fm, expr, custom_expr);
   // color
   if (colour) {
-    fumo_colour(fm);
+    SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
   }
   // CYOA mode
   if (display_name) {
@@ -456,7 +479,7 @@ int main(int argc, char **argv) {
   }
   // reset color
   if (colour) {
-    printf(RESET_COLOR);
+    RESET_COLOR;
   }
   // fumo!
   fumofumo(fm);
