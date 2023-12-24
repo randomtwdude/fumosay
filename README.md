@@ -5,7 +5,7 @@ fumosay is like the classic cowsay, but featuring funky fumos, written in C.
 Written in the spirit of funkyness.
 ```
 
-<img src="https://github.com/randomtwdude/fumosay/assets/105645765/390b9eba-9e0d-4e73-82ff-80d998aabd29" width=750>
+<img src="https://github.com/randomtwdude/fumosay/assets/105645765/2375b4d5-abe7-47ef-97c7-2fedc9ba84a9" width=750>
 
 ## Features
 - Fumos!<br>
