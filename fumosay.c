@@ -343,6 +343,68 @@ void printMessage(int argc, char **argv, size_t bubble_size) {
   } // for each word
 }
 
+// experimental minimum raggedness algo
+// Based on the shortest path algo. (xxyxyz.org/line-breaking)
+char **new_word_wrapper(int count, char **words, size_t width, int *linec) {
+
+  int *offsets = calloc((count + 1), sizeof(int));
+  for (int i = 1; i < count + 1; i++) {
+    offsets[i] = offsets[i - 1] + strlen(words[i - 1]);
+  }
+
+  int *minima = malloc((count + 1) * sizeof(int));
+  memset(minima, 0x7f, (count + 1) * sizeof(int)); // init to some large number
+  minima[0] = 0;
+  int *breaks = calloc((count + 1), sizeof(int));
+
+  for (int i = 0; i < count; i++) {
+    int j = i + 1;
+    while (j <= count) {
+      int w = offsets[j] - offsets[i] + j - i - 1;
+      if (w > width) {
+        break;
+      }
+      int cost = minima[i] + ((i > 0 && j == count) ? 0 : (width - w) * (width - w));
+      if (cost <= minima[j]) {
+        minima[j] = cost;
+        breaks[j] = i;
+      }
+      j++;
+    }
+  }
+
+  // output buffers
+  char **lines = malloc(sizeof(char *));
+  int lines_count = 0;
+  int j = count;
+  while (j > 0) {
+    int i = breaks[j];
+    char *line;
+    size_t len;
+    FILE *new_line = open_memstream(&line, &len);
+    for (int k = i; k < j; k++) {
+      fprintf(new_line, "%s ", words[k]);
+    }
+    fflush(new_line);
+    lines[lines_count++] = line;
+    lines = realloc(lines, (lines_count + 1) * sizeof(char *));
+    j = i;
+  }
+  *linec = lines_count;
+  return realloc(lines, lines_count * sizeof(char *));
+}
+
+// prints the paragraphs produced by new_word_wrapper
+void output_buffer_print(char **lines, int linec, size_t bubble_width) {
+  int padding;
+  for (int i = linec - 1; i >= 0; i--) {
+    lines[i][strcspn(lines[i], "\n")] = 0;
+    printf("( %s", lines[i]);
+    paddedBreak(bubble_width - strlen(lines[i]) - 1);
+    free(lines[i]);
+  }
+}
+
 int main(int argc, char **argv) {
   // init
   srand(time(NULL));
@@ -449,6 +511,25 @@ int main(int argc, char **argv) {
   }
 
   size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
+  printf("Bubble width %d\n", bubble_width);
+
+  // experiments
+  /* int last_section = 0, cur_section = 0, linec;
+  char **process = word_vector;
+  char *nl;
+  for (int i = 0; i < word_count; i++) {
+    cur_section++;
+    if ((nl = strchr(word_vector[i], '\n')) != NULL || i == word_count - 1) {
+      if (nl) {
+        *nl = 0; // strip the last newline
+      }
+      process += last_section;
+      char **output = new_word_wrapper(cur_section, process, bubble_width - 2, &linec);
+      output_buffer_print(output, linec, bubble_width);
+      last_section = cur_section;
+      cur_section = 0;
+    }
+  } */
 
   // choose a fumo if not already chosen
   if (fm == -1) {
