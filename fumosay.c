@@ -65,7 +65,7 @@ int numberize(char *c) {
   return (int)number;
 }
 
-// get one word
+// get one word with max length
 char *getInput(FILE *st, size_t size) {
   char *str;
   int ch;
@@ -92,7 +92,7 @@ char *getInput(FILE *st, size_t size) {
         return str;
       }
     }
-    if (ch == '\n') {
+    if (ch == '\n' || len == MAX_WIDTH - 1) {
       break;
     }
   } // while
@@ -249,101 +249,7 @@ void paddedBreak(int padding) {
   printf(")\n");
 }
 
-// greedy algorithm
-// TODO: use something better
-void printMessage(int argc, char **argv, size_t bubble_size) {
-  size_t cur_line = 0;
-  bool line_break = false;
-
-  for (int i = 0; i < argc; i++) {
-
-    line_break = false;
-    size_t word_len = strlen(argv[i]) + 1;
-    if (argv[i][word_len - 2] == '\n') {
-      argv[i][word_len - 2] = 0; // strip newline
-      word_len -= 1;
-      line_break = true;
-    }
-
-    // left edge
-    if (cur_line == 0) {
-      printf("( ");
-    }
-
-    // word fits
-    if (cur_line + word_len <= bubble_size) {
-      printf("%s ", argv[i]);
-      if (cur_line + word_len == bubble_size) {
-        // terminate this line if max length
-        paddedBreak(0);
-        cur_line = 0;
-        continue;
-      } else if (i == argc - 1) {
-        // terminate all if last word
-        paddedBreak(bubble_size - cur_line - word_len);
-        break;
-      } else if (line_break) {
-        // terminate by newline
-        paddedBreak(bubble_size - cur_line - word_len);
-        cur_line = 0;
-        continue;
-      }
-      cur_line += word_len;
-      continue;
-    }
-    // word doesn't fit this line
-    // break if line isn't empty
-    if (cur_line > 0) {
-      paddedBreak(bubble_size - cur_line);
-      printf("( ");
-    }
-    // now we're in a new line
-    if (word_len > bubble_size) {
-      // word is too long for a single line
-      char *word = argv[i];
-      size_t out = 0;
-      for (int j = 0;; j++) {
-        size_t len = MIN(bubble_size - 1 /* leave a blank for looks */, strlen(word));
-        printf("%.*s", (int)len, word);
-        word += len;
-        out += len;
-        cur_line = len;
-        if (out >= word_len - 1) {
-          if (line_break) {
-            paddedBreak(bubble_size - cur_line);
-            cur_line = 0;
-          } else {
-            printf(" ");
-            cur_line += 1;
-          }
-          break;
-        } else {
-          paddedBreak(1);
-        }
-        printf("( ");
-      } // for
-      if (line_break) {
-        cur_line = 0;
-      }
-    } else {
-      // word fits in a single line
-      printf("%s ", argv[i]);
-      cur_line = word_len;
-      if (i == argc - 1) {
-        paddedBreak(bubble_size - cur_line);
-        break;
-      }
-      if (line_break) {
-        paddedBreak(bubble_size - cur_line);
-        printf("( ");
-        paddedBreak(bubble_size);
-        cur_line = 0;
-      }
-    } // word doesn't fit this line
-  } // for each word
-}
-
-// experimental minimum raggedness algo
+// Shiny "better" word-wrapping
 // Based on the shortest path algo. (xxyxyz.org/line-breaking)
 char **new_word_wrapper(int count, char **words, size_t width, int *linec) {
 
@@ -507,29 +413,26 @@ int main(int argc, char **argv) {
   } else {
     // read from cmd line
     word_count = argc - optind;
-    word_vector = argv + optind;
+    // I can't realloc the argv so this'll have to do
+    word_vector = malloc(word_count * sizeof(char *));
+    memcpy(word_vector, argv + optind, word_count * sizeof(char *));
+    // cut words that are too long
+    for (int i = 0; i < word_count; i++) {
+      if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
+        printf("long word!\n");
+        word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
+        word_count++;
+        for (int j = word_count - 1; j > i + 1; j--) {
+          word_vector[j] = word_vector[j - 1];
+        }
+        word_vector[i + 1] = malloc(strlen(word_vector[i]) - MAX_WIDTH + 2);
+        memmove(word_vector[i + 1], word_vector[i] + MAX_WIDTH - 1, strlen(word_vector[i]) - MAX_WIDTH + 2);
+        word_vector[i][MAX_WIDTH - 1] = 0;
+      }
+    }
   }
 
   size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
-  printf("Bubble width %d\n", bubble_width);
-
-  // experiments
-  /* int last_section = 0, cur_section = 0, linec;
-  char **process = word_vector;
-  char *nl;
-  for (int i = 0; i < word_count; i++) {
-    cur_section++;
-    if ((nl = strchr(word_vector[i], '\n')) != NULL || i == word_count - 1) {
-      if (nl) {
-        *nl = 0; // strip the last newline
-      }
-      process += last_section;
-      char **output = new_word_wrapper(cur_section, process, bubble_width - 2, &linec);
-      output_buffer_print(output, linec, bubble_width);
-      last_section = cur_section;
-      cur_section = 0;
-    }
-  } */
 
   // choose a fumo if not already chosen
   if (fm == -1) {
@@ -545,17 +448,35 @@ int main(int argc, char **argv) {
   if (display_name) {
     printf("%s says:\n", FUMO_LIST[fm].name);
   }
+
   // top line
   fputc(' ', stdout);
-  for (int i = 0; i < bubble_width; i++) {
+  for (int i = 0; i < bubble_width + 1; i++) {
     fputc('_', stdout);
   }
   fputc('\n', stdout);
+
   // message
-  printMessage(word_count, word_vector, bubble_width - 1);
+  int last_section = 0, cur_section = 0, linec;
+  char **process = word_vector;
+  char *nl;
+  for (int i = 0; i < word_count; i++) {
+    cur_section++;
+    if ((nl = strchr(word_vector[i], '\n')) != NULL || i == word_count - 1) {
+      if (nl) {
+        *nl = 0; // strip the last newline
+      }
+      process += last_section;
+      char **output = new_word_wrapper(cur_section, process, bubble_width - 1, &linec);
+      output_buffer_print(output, linec, bubble_width + 1);
+      last_section = cur_section;
+      cur_section = 0;
+    }
+  }
+
   // bottom line
   fputc(' ', stdout);
-  for (int i = 0; i < bubble_width; i++) {
+  for (int i = 0; i < bubble_width + 1; i++) {
     fputc('-', stdout);
   }
   // reset color
