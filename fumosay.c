@@ -71,7 +71,7 @@ char *getInput(FILE *st, size_t size) {
   int ch;
   size_t len = 0;
   // allocate buffer
-  str = realloc(NULL, sizeof(*str) * size);
+  str = malloc(sizeof(*str) * size);
   if (!str) {
     return str;
   }
@@ -97,7 +97,7 @@ char *getInput(FILE *st, size_t size) {
     }
   } // while
   str[len++] = '\0';
-  return realloc(str, sizeof(*str) * len);
+  return realloc(str, len);
 }
 
 // pick a fumo
@@ -251,7 +251,7 @@ void paddedBreak(int padding) {
 
 // Shiny "better" word-wrapping
 // Based on the shortest path algo. (xxyxyz.org/line-breaking)
-char **new_word_wrapper(int count, char **words, size_t width, int *linec) {
+char **word_wrapper(int count, char **words, size_t width, int *linec, bool no_wrap) {
 
   int *offsets = calloc((count + 1), sizeof(int));
   for (int i = 1; i < count + 1; i++) {
@@ -292,23 +292,31 @@ char **new_word_wrapper(int count, char **words, size_t width, int *linec) {
       fprintf(new_line, "%s ", words[k]);
     }
     fflush(new_line);
+    fclose(new_line);
+    if (!no_wrap) {
+      // strip newline and trailing space
+      line[strcspn(line, "\n") - 1] = 0;
+    }
     lines[lines_count++] = line;
     lines = realloc(lines, (lines_count + 1) * sizeof(char *));
     j = i;
   }
   *linec = lines_count;
+  free(offsets);
+  free(minima);
+  free(breaks);
   return realloc(lines, lines_count * sizeof(char *));
 }
 
 // prints the paragraphs produced by new_word_wrapper
-void output_buffer_print(char **lines, int linec, size_t bubble_width) {
+void print_words(char **lines, int linec, size_t bubble_width) {
   int padding;
   for (int i = linec - 1; i >= 0; i--) {
-    lines[i][strcspn(lines[i], "\n")] = 0;
     printf("( %s", lines[i]);
     paddedBreak(bubble_width - strlen(lines[i]) - 1);
     free(lines[i]);
   }
+  free(lines);
 }
 
 int main(int argc, char **argv) {
@@ -377,7 +385,7 @@ int main(int argc, char **argv) {
   if (optind == argc) {
     // read from stdin instead
     if (no_wrap) {
-      char *buffer = NULL;
+      char *buffer;
       size_t buf_line, line;
       while (getline(&buffer, &buf_line, stdin) > -1) {
         char *token;
@@ -419,9 +427,7 @@ int main(int argc, char **argv) {
     // cut words that are too long
     for (int i = 0; i < word_count; i++) {
       if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
-        printf("long word!\n");
-        word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
-        word_count++;
+        word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
         for (int j = word_count - 1; j > i + 1; j--) {
           word_vector[j] = word_vector[j - 1];
         }
@@ -451,7 +457,7 @@ int main(int argc, char **argv) {
 
   // top line
   fputc(' ', stdout);
-  for (int i = 0; i < bubble_width + 1; i++) {
+  for (int i = 0; i < bubble_width; i++) {
     fputc('_', stdout);
   }
   fputc('\n', stdout);
@@ -467,8 +473,8 @@ int main(int argc, char **argv) {
         *nl = 0; // strip the last newline
       }
       process += last_section;
-      char **output = new_word_wrapper(cur_section, process, bubble_width - 1, &linec);
-      output_buffer_print(output, linec, bubble_width + 1);
+      char **output = word_wrapper(cur_section, process, bubble_width - 2, &linec, no_wrap);
+      print_words(output, linec, bubble_width);
       last_section = cur_section;
       cur_section = 0;
     }
@@ -476,7 +482,7 @@ int main(int argc, char **argv) {
 
   // bottom line
   fputc(' ', stdout);
-  for (int i = 0; i < bubble_width + 1; i++) {
+  for (int i = 0; i < bubble_width; i++) {
     fputc('-', stdout);
   }
   // reset color
@@ -485,5 +491,7 @@ int main(int argc, char **argv) {
   }
   // fumo!
   fumofumo(fm);
+
+  free(word_vector);
   return 0;
 }
