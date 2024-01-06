@@ -630,6 +630,7 @@ const fumo_data FUMO_LIST[FUMO_COUNT] = {
   { alice,      "Alice",      {245, 200, 100} }, // 15
 };
 
+#define EXPRESSION_COUNT 6
 const char *EXPRESSIONS[] = {
   /* alternate expressions for fumos, 8x3 each
      the first character of each line would be placed at the 'E'

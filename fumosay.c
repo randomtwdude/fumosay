@@ -92,7 +92,7 @@ char *getInput(FILE *st, size_t size) {
         return str;
       }
     }
-    if (ch == '\n' || len == MAX_WIDTH - 1) {
+    if (ch == '\n' || len == MAX_WIDTH - 2) {
       break;
     }
   } // while
@@ -177,6 +177,10 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
     set_expression(4); break;
   case 'w':
     set_expression(5); break;
+  case 'r':
+    int r = rand() % EXPRESSION_COUNT;
+    set_expression(r);
+    break;
   default:
     while (count < 3) {
       p = strchr(FUMO_LIST[fm].fumo, 'E');
@@ -251,7 +255,7 @@ void paddedBreak(int padding) {
 
 // Shiny "better" word-wrapping
 // Based on the shortest path algo. (xxyxyz.org/line-breaking)
-char **word_wrapper(int count, char **words, size_t width, int *linec, bool no_wrap) {
+void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_wrap, bool cmd) {
 
   int *offsets = calloc((count + 1), sizeof(int));
   for (int i = 1; i < count + 1; i++) {
@@ -279,44 +283,43 @@ char **word_wrapper(int count, char **words, size_t width, int *linec, bool no_w
     }
   }
 
-  // output buffers
-  char **lines = malloc(sizeof(char *));
-  int lines_count = 0;
+  // reverse the break numbers
+  int *intervals = malloc((count + 1) * sizeof(int));
   int j = count;
   while (j > 0) {
     int i = breaks[j];
-    char *line;
-    size_t len;
-    FILE *new_line = open_memstream(&line, &len);
-    for (int k = i; k < j; k++) {
-      fprintf(new_line, "%s ", words[k]);
-    }
-    fflush(new_line);
-    fclose(new_line);
-    if (!no_wrap) {
-      // strip newline and trailing space
-      line[strcspn(line, "\n") - 1] = 0;
-    }
-    lines[lines_count++] = line;
-    lines = realloc(lines, (lines_count + 1) * sizeof(char *));
+    intervals[i] = j;
     j = i;
   }
-  *linec = lines_count;
+
+  // print message
+  int cur_len, start;
+  while (j < count) {
+    cur_len = 0;
+    start = j;
+    printf("( ");
+    for (; j < intervals[start] - 1; j++) {
+      printf("%s ", words[j]);
+      cur_len += strlen(words[j]) + 1;
+      if (!cmd) {
+        free(words[j]);
+      }
+    }
+    // last word has no space
+    printf("%s", words[j]);
+    cur_len += strlen(words[j]);
+    if (!cmd) {
+      free(words[j]);
+    }
+    paddedBreak(bubble - cur_len - 1);
+    j = intervals[start]; // continue
+  }
+
+  // clean
+  free(intervals);
   free(offsets);
   free(minima);
   free(breaks);
-  return realloc(lines, lines_count * sizeof(char *));
-}
-
-// prints the paragraphs produced by new_word_wrapper
-void print_words(char **lines, int linec, size_t bubble_width) {
-  int padding;
-  for (int i = linec - 1; i >= 0; i--) {
-    printf("( %s", lines[i]);
-    paddedBreak(bubble_width - strlen(lines[i]) - 1);
-    free(lines[i]);
-  }
-  free(lines);
 }
 
 int main(int argc, char **argv) {
@@ -376,8 +379,7 @@ int main(int argc, char **argv) {
   }
 
   if (MAX_WIDTH < 2) {
-    printf("The fumos say: Width must be at least 2!\n");
-    exit(EXIT_FAILURE);
+    MAX_WIDTH = 2;
   }
 
   int word_count = 0;
@@ -385,10 +387,10 @@ int main(int argc, char **argv) {
   if (optind == argc) {
     // read from stdin instead
     if (no_wrap) {
-      char *buffer;
+      char *buffer = NULL;
       size_t buf_line, line;
       while (getline(&buffer, &buf_line, stdin) > -1) {
-        char *token;
+        char *token = NULL;
         FILE *st = open_memstream(&token, &line);
         for (int i = 0; i < buf_line; i++) {
           if (buffer[i] == 9) {
@@ -397,17 +399,18 @@ int main(int argc, char **argv) {
             fprintf(st, "%c", buffer[i]);
           }
         }
-        fflush(st);
+        fclose(st);
         word_vector[word_count++] = token;
         word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
       }
       word_vector = realloc(word_vector, word_count * sizeof(char *));
+      free(buffer);
     } else {
       while (1) {
         char *token;
         token = getInput(stdin, 10);
         if (!token) {
-          printf("Something has gone terribly wrong!\n");
+          printf("Something has gone terribly wrong! (malloc failed)\n");
           exit(EXIT_FAILURE);
         }
         if (strlen(token) == 0) {
@@ -425,15 +428,17 @@ int main(int argc, char **argv) {
     word_vector = malloc(word_count * sizeof(char *));
     memcpy(word_vector, argv + optind, word_count * sizeof(char *));
     // cut words that are too long
-    for (int i = 0; i < word_count; i++) {
-      if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
-        word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
-        for (int j = word_count - 1; j > i + 1; j--) {
-          word_vector[j] = word_vector[j - 1];
+    if (!no_wrap) {
+      for (int i = 0; i < word_count; i++) {
+        if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
+          word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
+          for (int j = word_count - 1; j > i + 1; j--) {
+            word_vector[j] = word_vector[j - 1];
+          }
+          word_vector[i + 1] = malloc(strlen(word_vector[i]) - MAX_WIDTH + 2);
+          memmove(word_vector[i + 1], word_vector[i] + MAX_WIDTH - 1, strlen(word_vector[i]) - MAX_WIDTH + 2);
+          word_vector[i][MAX_WIDTH - 1] = 0;
         }
-        word_vector[i + 1] = malloc(strlen(word_vector[i]) - MAX_WIDTH + 2);
-        memmove(word_vector[i + 1], word_vector[i] + MAX_WIDTH - 1, strlen(word_vector[i]) - MAX_WIDTH + 2);
-        word_vector[i][MAX_WIDTH - 1] = 0;
       }
     }
   }
@@ -463,7 +468,7 @@ int main(int argc, char **argv) {
   fputc('\n', stdout);
 
   // message
-  int last_section = 0, cur_section = 0, linec;
+  int last_section = 0, cur_section = 0;
   char **process = word_vector;
   char *nl;
   for (int i = 0; i < word_count; i++) {
@@ -473,8 +478,7 @@ int main(int argc, char **argv) {
         *nl = 0; // strip the last newline
       }
       process += last_section;
-      char **output = word_wrapper(cur_section, process, bubble_width - 2, &linec, no_wrap);
-      print_words(output, linec, bubble_width);
+      word_wrapper(cur_section, process, bubble_width - 2, bubble_width, no_wrap, optind != argc);
       last_section = cur_section;
       cur_section = 0;
     }
