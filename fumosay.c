@@ -12,6 +12,11 @@
 #include <string.h>
 #include <stdbool.h>
 
+// windows support!
+#ifdef _WIN32
+#include "windows_func.c"
+#endif
+
 /* ===== DEFINES ===== */
 int MAX_WIDTH = 80;
 
@@ -412,17 +417,23 @@ int main(int argc, char **argv) {
     if (no_wrap) { // read one line at a time
       char *buffer = NULL;
       size_t buf_line, line;
-      while (getline(&buffer, &buf_line, stdin) > -1) {
+      ssize_t bytes;
+      while ((bytes = getline(&buffer, &buf_line, stdin)) > -1) {
+      #ifndef _WIN32
         char *token = NULL;
-        FILE *st = open_memstream(&token, &line);
+        FILE *st = open_memstream(&token, &line); // POSIX supremacy
         for (int i = 0; i < buf_line; i++) {
-          if (buffer[i] == 9) {
-            fprintf(st, "    "); // replace tab with 4 spaces
+          if (buffer[i] == 9) { // TAB
+            fprintf(st, "    ");
           } else {
             fprintf(st, "%c", buffer[i]);
           }
         }
         fclose(st);
+      #else
+        char *token = malloc(buf_line);
+        replace_tabs_windows(buffer, &token, bytes, buf_line);
+      #endif
         word_vector[word_count++] = token;
         word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
       }
