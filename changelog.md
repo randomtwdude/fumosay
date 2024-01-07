@@ -1,3 +1,24 @@
+### v1.0 - 2024/01/07
+The fumos thank you for having them with you! The fumos have elected to bump the version number to 1.
+> More fumos to come still!
+- New word-wrapping algorithm should produce more "rectangular" and better-looking paragraphs.<br>
+  Also fixes a bug where the text box does not render correctly if the last word in the message is longer than line width.
+- The `-f` option now accepts names of multiple fumos, separated by `,`. One of them will be chosen at random.
+- Added two more expression presets.<br>
+  | preset | description |
+  | ------ | ----------- |
+  |  `b`   | baka        |
+  |  `r`   | random      |
+
+- New fumofumos!<br>
+  Fumos from heavens and earth: Tenshi, Cirno, Aya, Sakuya, and Inu Sakuya make this version *STRONGER* than ever.
+- Art tweaks<br>
+  Patchy got more tweaks.
+- The help text is now provided by a fumo.
+- Technical changes:<br>
+  Package built.
+  Updated license.
+
 ### v0.8 - 2023/12/24
 Merry Christmas! In festive times like this, every fumo deserves a smile...<br>
 > Try options `-f patchy -E w` for an incredibly derpy Patchouli :p
@@ -12,7 +33,7 @@ Merry Christmas! In festive times like this, every fumo deserves a smile...<br>
   |  `4`   | big smile   |
   |  `v`   | vampire!    |
   |  `w`   | bnuuy www   |
-  
+
   Or specify your own by giving a string longer than 1 character, the first 24 characters will be split into 3 lines in the fumo.<br>
   Each line is 8 characters, with the center generally in the 5th position. Shorter inputs are automatically padded to length with whitespaces.
 - Added a manual page with examples, you can view it with `man ./fumosay.1`.

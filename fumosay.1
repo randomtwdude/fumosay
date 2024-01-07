@@ -1,24 +1,24 @@
-.TH fumosay 1 "2023 Dec 24" "version 0.8"
+.TH fumosay 1 "2024 Jan 07" "version 1.0"
 .SH NAME
 fumosay - funky talking fumofumos
 
 .SH SYNOPSIS
 fumosay
-.BI "[-hlngc] [-W " "column" "] [-f " "name" "] [-E " "expression" "]"
+.BI "[-hlngc] [-W " "column" "] [-f " "name(s)" "] [-E " "expression" "]"
 
 .SH EXAMPLES
 .IP "fumosay Hello world!"
-.IP "fortune | fumosay -c -f alice -E 3"
-Have Alice Margatroid read out the output of fortune, with colored text and a smile.
+.IP "fortune | fumosay -c -f alice,marisa -E 3"
+Have Alice Margatroid or Marisa Kirisame read out the output of fortune, with colored text and a smile.
 
 .SH DESCRIPTION
-.I fumosay 
-draws an ASCII art of a FumoFumo plushie saying something the user provided. If no message is in the command line, fumos will read from standard input. They will word-wrap the message at 80 columns and print it out on standard output.
+.I fumosay
+draws an ASCII art of a FumoFumo plushie saying something the user provided. If no message is in the command line, fumos will read from standard input. The fumo will word-wrap the message at 80 columns and print it out on standard output.
 
 .SH OPTIONS
 .TP
 .B -l
-List the name of all available fumos.
+List the names of all available fumos.
 .TP
 .B -n
 Disable word-wrapping, preserving white-spaces and line breaks. Allowing the fumo to say another fumo.
@@ -27,28 +27,37 @@ Disable word-wrapping, preserving white-spaces and line breaks. Allowing the fum
 Display a simple prompt at the top of the message, like a video game dialogue.
 .TP
 .B -c
-Color the text.
+Color the text with a color that vaguely represents the fumo.
 .TP
 .BR "-W " "column"
 Specify where the message should be word-wrapped, the default is 80. This option is
-.I ignored 
+.I ignored
 .RB "if " "-n " "is set."
 .TP
 .BR "-f " "name"
-Specify a specific fumo (by first name) to read your message.
+Specify specific fumos to read your message. Use "," to specify more than one name, one will be picked at random among them.
 .TP
 .BR "-E " "expression"
 Set an alternate expression (mouth string) for the fumo. You may choose a preset from the following or specify your own custom expression.
 .RS
 .br
-\'1\' - frowny ; 
-\'2\' - neutral ; 
-\'3\' - smile ; 
-\'4\' - bigger smile ; 
-\'v\' - little vampire sister ;
-\'w\' - lucky bunny
+\'1\' - frowny
+.br
+\'2\' - neutral
+.br
+\'3\' - smile
+.br
+\'4\' - bigger smile
+.br
+\'v\' - little vampire sister
+.br
+\'w\' - lucky bunny :3
+.br
+\'b\' - is for baka
+.br
+\'r\' - pick randomly
 .PP
-To specify a custom expression, enter anything longer than one character. The first 24 characters of the input will be used, if fewer than 24 characters is given, it will be padded by spaces. The 24 characters will be split into 3 separate lines of 8 characters each. The center of each line is located at the 5th position out of 8. The following example produces a 3-wide smile in the middle of line 2. There are 11 leading spaces.
+To specify a custom expression, enter anything longer than one character. The first 24 characters of the input will be used, if fewer than 24 characters is given, the space will be filled by spaces automatically. The 24 characters will be split into 3 separate lines of 8 characters each. The center of each line is located at the 5th position out of 8. The following example produces a 3-wide smile in the middle of line 2. There are 11 leading spaces.
 .sp
 fumosay -E "           *_*"
 .RE
@@ -60,7 +69,7 @@ Display help message.
 The quote-unquote configuration file "fumo.fumo" is really just C code with instructions. You can add new fumos to it and recompile fumosay.
 
 .SH BUGS
-ANSI escape sequences will make the text bubble misaligned.
+Fumosay assumes every byte in the input is a 1-wide printable character, for now.
 
 .SH SEE ALSO
 .IR "cowsay" "(1), " "FORTUNE" "(6)"

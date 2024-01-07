@@ -1,6 +1,6 @@
-// -- fumosay v0.8 --
+// -- fumosay v1.0 --
 // like cowsay, but with funky fumos!
-// O' Great Reimu, please let me pass the course.
+// ᗜ_ᗜ have a nice day ᗜˬᗜ
 
 /* ===== INCLUDES ===== */
 #include <ctype.h>
@@ -21,13 +21,13 @@ typedef struct color {
 
 typedef struct fumo_data {
   char  *fumo; // fumo ascii art
-  char  *name; // display name
+  char  *name; // display & search name
   color color;
 } fumo_data;
 
 typedef int fumo_who;
 
-// fumo file
+// fumo & expression file
 #include "fumo.fumo"
 
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
@@ -37,25 +37,29 @@ typedef int fumo_who;
 #define MIN(a,b) (a > b ? b : a)
 #define MAX(a,b) (a > b ? a : b)
 
-void helpInfo() {
-  printf("=== fumosay ver. 0.8 ===\n"
+void helpInfo(fumo_who fm) {
+  printf("=== fumosay ver. 1.0 ===\n"
          "Usage: fumosay [-hlngc] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
          "-W     Specify roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
-         "-f     Pick a fumo by name.\n"
+         "-f     Pick fumos by name.\n"
          "-E     Change the expression (mouth) of the fumo.\n"
-         "       Use a one-letter preset below or enter your own!\n"
-         "       Presets: '1', '2', '3', '4', 'v', 'w'\n"
+         "       Use a one-letter preset below or enter your own (like \"          *_*\")!\n"
+         "       Presets: '1', '2', '3', '4', 'v', 'w', 'b', 'r'(random)\n"
          "-g     Display the character's name above the text box like a story game.\n"
          "-c     Color the text.\n"
          "-h     Display this message.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
-         "Fumos feature characters from Touhou Project.\n");
+         "Fumos feature characters from Touhou Project, say hi to ");
+  SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+  fputs(FUMO_LIST[fm].name, stdout);
+  RESET_COLOR;
+  fputc('!', stdout);
 }
 
-// string to number
+// Turns a string to number
 int numberize(char *c) {
   long number = strtol(c, (char **)NULL, 0);
   if (number == 0) {
@@ -65,25 +69,23 @@ int numberize(char *c) {
   return (int)number;
 }
 
-// get one word with max length
+// Returns one word that's at most a certain length
 char *getInput(FILE *st, size_t size) {
   char *str;
   int ch;
   size_t len = 0;
-  // allocate buffer
-  str = malloc(sizeof(*str) * size);
+  str = malloc(size);
   if (!str) {
     return str;
   }
   while ((ch = fgetc(st)) != EOF) {
-    if (ch == ' ' || ch == 9 /* TAB */) {
+    if (ch == ' ' || ch == '\t') {
       if (len) {
-        break; // if we have a word, spaces terminate
+        break;    // if we have a word, spaces terminate
       } else {
         continue; // ignore consecutive spaces
       }
     }
-    // append new character
     str[len++] = ch;
     // extend the buffer if necessary
     if (len == size) {
@@ -95,12 +97,12 @@ char *getInput(FILE *st, size_t size) {
     if (ch == '\n' || len == MAX_WIDTH - 2) {
       break;
     }
-  } // while
+  }
   str[len++] = '\0';
   return realloc(str, len);
 }
 
-// pick a fumo
+// Pick a fumo
 fumo_who fumo_picker(char *str) {
   // we want to compare the lower case version
   for (int i = 0; i < strlen(str); i++) {
@@ -108,8 +110,8 @@ fumo_who fumo_picker(char *str) {
   }
   fumo_who i = 0;
   while (i < FUMO_COUNT) {
-    char *fm = strdup(FUMO_LIST[i].name); // lower case
-    fm[0] = tolower(fm[0]); // uncapitalize first character
+    char *fm = strdup(FUMO_LIST[i].name);
+    fm[0] = tolower(fm[0]);
     if (strstr(str, fm) != NULL) {
       free(fm);
       break;
@@ -117,26 +119,31 @@ fumo_who fumo_picker(char *str) {
     free(fm);
     i++;
   }
-  // end
+
   if (i == FUMO_COUNT) {
-    // alternate names
+    // alternate names we may want to check
     #define check_name(name, id) {          \
       if (strstr(str, #name) != NULL) {     \
         return id;                          \
       }                                     \
     }
-
     check_name(patchy, 1);
     check_name(remi, 10);
     check_name(snae, 11);
     check_name(gap, 13);
+    check_name(tenko, 16);
+    check_name(baka, 17);
+    check_name(maido, 19);
+    check_name(inu, 20);
 
+    printf("Can't find fumo \"%s\"!\n", str);
     return -1;
   }
+
   return i;
 }
 
-// set fumo expression
+// Set fumo expression, modifies string
 void fumo_expr(fumo_who fm, char ex, char *custom) {
   char *p;
   short count = 0;
@@ -177,6 +184,8 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
     set_expression(4); break;
   case 'w':
     set_expression(5); break;
+  case 'b':
+    set_expression(6); break;
   case 'r':
     int r = rand() % EXPRESSION_COUNT;
     set_expression(r);
@@ -193,7 +202,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
   #undef set_expression
 }
 
-// lists fumos
+// Lists fumos
 void fumo_list() {
   printf("There are %d fumos!\n-----\n", FUMO_COUNT);
   for (int i = 0; i < FUMO_COUNT; i++) {
@@ -201,12 +210,12 @@ void fumo_list() {
   }
 }
 
-// fumo!
+// Fumo!
 void fumofumo(fumo_who fm) {
   fputs(FUMO_LIST[fm].fumo, stdout);
 }
 
-// returns length of longest line
+// Returns length of longest line, considering hard line breaks
 size_t longestLineWidth(int argc, char **argv) {
   size_t cur_line = 0;
   size_t max_line = 0;
@@ -224,6 +233,7 @@ size_t longestLineWidth(int argc, char **argv) {
     if (word_len > MAX_WIDTH) {
       return MAX_WIDTH;
     }
+
     if (cur_line + word_len < MAX_WIDTH) {
       // add this word
       cur_line += word_len;
@@ -245,7 +255,7 @@ size_t longestLineWidth(int argc, char **argv) {
   return max_line;
 }
 
-// print some spaces and the right parenthesis
+// Print some spaces and the right parenthesis
 void paddedBreak(int padding) {
   for (int i = 0; i < padding; i++) {
     printf(" ");
@@ -263,7 +273,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
   }
 
   int *minima = malloc((count + 1) * sizeof(int));
-  memset(minima, 0x7f, (count + 1) * sizeof(int)); // init to some large number
+  memset(minima, 0x7f, (count + 1) * sizeof(int)); // big number
   minima[0] = 0;
   int *breaks = calloc((count + 1), sizeof(int));
 
@@ -274,6 +284,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
       if (w > width) {
         break;
       }
+      // do not add cost if it's the last line of the paragraph
       int cost = minima[i] + ((i > 0 && j == count) ? 0 : (width - w) * (width - w));
       if (cost <= minima[j]) {
         minima[j] = cost;
@@ -283,7 +294,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
     }
   }
 
-  // reverse the break numbers
+  // reverse the breaks so they're in the right order
   int *intervals = malloc((count + 1) * sizeof(int));
   int j = count;
   while (j > 0) {
@@ -305,14 +316,14 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
         free(words[j]);
       }
     }
-    // last word has no space
+    // last word has no space following it
     printf("%s", words[j]);
     cur_len += strlen(words[j]);
     if (!cmd) {
       free(words[j]);
     }
     paddedBreak(bubble - cur_len - 1);
-    j = intervals[start]; // continue
+    j = intervals[start];
   }
 
   // clean
@@ -324,7 +335,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
 
 int main(int argc, char **argv) {
   // init
-  srand(time(NULL));
+  srand(getpid());
   bool no_wrap = false;
   bool display_name = false;
   bool colour = false;
@@ -337,7 +348,10 @@ int main(int argc, char **argv) {
   while ((opt = getopt(argc, argv, "hlngcE:W:f:")) != -1) {
     switch (opt) {
     case 'h':
-      helpInfo();
+      fumo_who helper_fumo = rand() % FUMO_COUNT;
+      helpInfo(helper_fumo);
+      fumo_expr(helper_fumo, expr, custom_expr);
+      fumofumo(helper_fumo);
       exit(EXIT_SUCCESS);
     case 'l':
       fumo_list();
@@ -350,10 +364,19 @@ int main(int argc, char **argv) {
       MAX_WIDTH = no_wrap ? MAX_WIDTH : numberize(optarg);
       break;
     case 'f':
-      fm = fumo_picker(optarg);
-      if (fm == -1) {
-        printf("\"%s\"??? Choosing randomly...\n", optarg);
+      char *token = strtok(optarg, ",");
+      short choice_count = 0;
+      short *choices = NULL;
+      while (token) {
+        int choice = fumo_picker(token);
+        if (choice > -1) {
+          choices = realloc(choices, ++choice_count * sizeof(short));
+          choices[choice_count - 1] = choice;
+        }
+        token = strtok(NULL, ",");
       }
+      fm = choices[rand() % choice_count];
+      free(choices);
       break;
     case 'g':
       display_name = true;
@@ -378,15 +401,15 @@ int main(int argc, char **argv) {
     } // switch
   }
 
-  if (MAX_WIDTH < 2) {
-    MAX_WIDTH = 2;
+  if (MAX_WIDTH < 3) {
+    MAX_WIDTH = 3;
   }
 
+  // fumo reads
   int word_count = 0;
   char **word_vector = realloc(NULL, sizeof(char *));
-  if (optind == argc) {
-    // read from stdin instead
-    if (no_wrap) {
+  if (optind == argc) { // read from stdin instead
+    if (no_wrap) { // read one line at a time
       char *buffer = NULL;
       size_t buf_line, line;
       while (getline(&buffer, &buf_line, stdin) > -1) {
@@ -405,7 +428,7 @@ int main(int argc, char **argv) {
       }
       word_vector = realloc(word_vector, word_count * sizeof(char *));
       free(buffer);
-    } else {
+    } else { // read one word at a time
       while (1) {
         char *token;
         token = getInput(stdin, 10);
@@ -421,10 +444,9 @@ int main(int argc, char **argv) {
       }
       word_vector = realloc(word_vector, word_count * sizeof(char *));
     }
-  } else {
-    // read from cmd line
+  } else { // read from cmd line
     word_count = argc - optind;
-    // I can't realloc the argv so this'll have to do
+    // I can't realloc argv so this'll have to do
     word_vector = malloc(word_count * sizeof(char *));
     memcpy(word_vector, argv + optind, word_count * sizeof(char *));
     // cut words that are too long
@@ -443,18 +465,22 @@ int main(int argc, char **argv) {
     }
   }
 
+  // calculate the width of the bubble
   size_t bubble_width = longestLineWidth(word_count, word_vector) + 1;
 
   // choose a fumo if not already chosen
   if (fm == -1) {
     fm = rand() % FUMO_COUNT;
   }
-  // expression
+
+  // finalize expression
   fumo_expr(fm, expr, custom_expr);
+
   // color
   if (colour) {
     SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
   }
+
   // CYOA mode
   if (display_name) {
     printf("%s says:\n", FUMO_LIST[fm].name);
@@ -475,7 +501,7 @@ int main(int argc, char **argv) {
     cur_section++;
     if ((nl = strchr(word_vector[i], '\n')) != NULL || i == word_count - 1) {
       if (nl) {
-        *nl = 0; // strip the last newline
+        *nl = 0; // strip the last newline of the paragraph
       }
       process += last_section;
       word_wrapper(cur_section, process, bubble_width - 2, bubble_width, no_wrap, optind != argc);
@@ -489,10 +515,12 @@ int main(int argc, char **argv) {
   for (int i = 0; i < bubble_width; i++) {
     fputc('-', stdout);
   }
+
   // reset color
   if (colour) {
     RESET_COLOR;
   }
+
   // fumo!
   fumofumo(fm);
 

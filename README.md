@@ -9,11 +9,13 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumos!<br>
-  16 adorable fumos come to your terminal!
-- Expressions!<br>
+  21 adorable fumos come to your machine!
+- Expressions<br>
   Have you seen Patchouli smiling like a gremlin?
-- Colors!<br>
-  Add some simple colors to the text for extra flair.
+- Fast & efficient<br>
+  Glorious C speeds.
+- Fancy algorithms<br>
+  Uses a minimum raggedness algorithm like TeX. (no other fancies of TeX though)
 
 ## Fumos
 The fumos are designed with the font Cascadia Code.
@@ -37,19 +39,28 @@ The fumos are designed with the font Cascadia Code.
   - Yakumo Yukari
   - Komeiji Satori
   - Alice Margatroid
+  - Hinanawi Tenshi
+  - Cirno
+  - Shameimaru Aya
+  - Izayoi Sakuya
+  - Inu Sakuya
 </details>
 
 ## Updates
 More or less frequent updates. See [changelog](changelog.md).
 
-## Compile
-`make`<br>
-Portability: fumosay uses UNIX features and GNU extensions of C.
+## Install
+Fumosay now uses GNU Autotools! Summon fumos with the incantations below.
+```
+./configure
+make
+make install
+```
 
 ## Use
-`./fumosay [message]` or pipe something in: `foo | ./fumosay`<br>
-For help, `./fumosay -h`.
-Man page now available.
+`fumosay [message]` or pipe something in: `foo | fumosay`<br>
+For help, `fumosay -h`.
+Man page available with `man fumosay`.
 
 Have fun!
 
