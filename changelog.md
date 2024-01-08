@@ -17,7 +17,7 @@ The fumos thank you for having them with you! The fumos have elected to bump the
 - The help text is now provided by a fumo.
 - Technical changes:<br>
   Package built.
-  Updated license.
+- (a day later) now on the AUR!
 
 ### v0.8 - 2023/12/24
 Merry Christmas! In festive times like this, every fumo deserves a smile...<br>
