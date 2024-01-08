@@ -50,12 +50,14 @@ The fumos are designed with the font Cascadia Code.
 More or less frequent updates. See [changelog](changelog.md).
 
 ## Install
-Fumosay now uses GNU Autotools! Summon fumos with the incantations below.
+Fumosay is now on the Arch User Repository! `paru fumosay`<br>
+For other Linux users:
 ```
 ./configure
 make
 make install
 ```
+Executable available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
 
 ## Use
 `fumosay [message]` or pipe something in: `foo | fumosay`<br>
