@@ -1,4 +1,4 @@
-// -- fumosay v1.0 --
+// -- fumosay v1.1 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -43,8 +43,8 @@ typedef int fumo_who;
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.0 ===\n"
-         "Usage: fumosay [-hlngc] [-W column] [-f name] [-E expression] (message)\n"
+  printf("=== fumosay ver. 1.1 ===\n"
+         "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
          "-W     Specify roughly where the message should be wrapped.\n"
@@ -54,7 +54,7 @@ void helpInfo(fumo_who fm) {
          "       Use a one-letter preset below or enter your own (like \"          *_*\")!\n"
          "       Presets: '1', '2', '3', '4', 'v', 'w', 'b', 'r'(random)\n"
          "-g     Display the character's name above the text box like a story game.\n"
-         "-c     Color the text.\n"
+         "-c     Color the text. (Optional) Specify an RGB color like \"-c255,255,255\".\n"
          "-h     Display this message.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project, say hi to ");
@@ -64,9 +64,9 @@ void helpInfo(fumo_who fm) {
   fputc('!', stdout);
 }
 
-// Turns a string to number
+// Turns a string to number (basically just strtol that rejects 0)
 int numberize(char *c) {
-  long number = strtol(c, (char **)NULL, 0);
+  long number = strtol(c, 0, 0);
   if (number == 0) {
     fprintf(stderr, "Invalid parameter: %s", c);
     exit(EXIT_FAILURE);
@@ -321,10 +321,9 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
         free(words[j]);
       }
     }
-    // last word has no space following it
-    printf("%s", words[j]);
+    printf("%s", words[j]); // last word has no space following it
     cur_len += strlen(words[j]);
-    if (!cmd) {
+    if (!cmd) { // only clean if the word is not from the command line
       free(words[j]);
     }
     paddedBreak(bubble - cur_len - 1);
@@ -344,13 +343,14 @@ int main(int argc, char **argv) {
   bool no_wrap = false;
   bool display_name = false;
   bool colour = false;
+  color custom_colour = {-1, -1, -1};
   char expr = 0;
   char custom_expr[30] = {0};
   fumo_who fm = -1;
 
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hlngcE:W:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hlngc::E:W:f:")) != -1) {
     switch (opt) {
     case 'h':
       fumo_who helper_fumo = rand() % FUMO_COUNT;
@@ -388,6 +388,19 @@ int main(int argc, char **argv) {
       break;
     case 'c':
       colour = true;
+      if (optarg) {
+        // custom color values
+        char *next_token;
+        custom_colour.R = (short) strtol(optarg, &next_token, 0);
+        while (!isdigit(*next_token)) {
+          next_token++;
+        }
+        custom_colour.G = (short) strtol(next_token, &next_token, 0);
+        while (!isdigit(*next_token)) {
+          next_token++;
+        }
+        custom_colour.B = (short) strtol(next_token, NULL, 0);
+      }
       break;
     case 'E':
       int optlen = strlen(optarg);
@@ -489,7 +502,11 @@ int main(int argc, char **argv) {
 
   // color
   if (colour) {
-    SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+    if (custom_colour.R != -1) {
+      SET_COLOR(custom_colour.R, custom_colour.G, custom_colour.B);
+    } else {
+      SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+    }
   }
 
   // CYOA mode

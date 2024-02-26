@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumos!<br>
-  21 adorable fumos come to your machine!
+  23 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen Patchouli smiling like a gremlin?
 - Fast & efficient<br>
@@ -44,6 +44,8 @@ The fumos are designed with the font Cascadia Code.
   - Shameimaru Aya
   - Izayoi Sakuya
   - Inu Sakuya
+  - Moriya Suwako
+  - Hong Meiling
 </details>
 
 ## Updates

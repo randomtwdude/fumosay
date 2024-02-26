@@ -1,3 +1,10 @@
+### v1.1 - 2024/02/26
+Just a minor update because no classes.
+- The `-c` option now accepts optional custom colors. For example, `-c200,150,230` gives a nice purple.
+- New fumofumos!<br>
+  Welcome Suwako and Meiling!
+- Mini tweaks.
+
 ### v1.0 - 2024/01/07
 The fumos thank you for having them with you! The fumos have elected to bump the version number to 1.
 > More fumos to come still!
