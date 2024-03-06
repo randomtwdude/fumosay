@@ -912,7 +912,7 @@ static char suika[] = R"fumo(
                    @      @                            @        @
                     *,__,%                              %,    ,%
                                                           *__*
-);
+)fumo";
 
 // Yorigami Shion
 static char shion[] = R"fumo(
@@ -948,12 +948,12 @@ static char shion[] = R"fumo(
                                  / *-------* \
                                 /             \
                                O               O
-);
+)fumo";
 
 /* ===== data section ===== */
 
 // number of fumos
-#define FUMO_COUNT 23
+#define FUMO_COUNT 25
 
 const fumo_data FUMO_LIST[FUMO_COUNT] = {
   /* data of fumos, art names match those of the ascii arts above..
