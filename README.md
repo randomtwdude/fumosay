@@ -55,10 +55,8 @@ More or less weekly update. See [changelog](changelog.md).
 
 ## Install
 Fumosay is now on the Arch User Repository: `paru fumosay`<br>
-For other Linux users:
+For other Linux users: download and extract the package from the release section and then...
 ```
-git clone https://github.com/randomtwdude/fumosay.git
-cd fumosay
 ./configure
 make
 make install
