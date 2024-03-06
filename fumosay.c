@@ -1,4 +1,4 @@
-// -- fumosay v1.1 --
+// -- fumosay v1.1.1 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -43,7 +43,7 @@ typedef int fumo_who;
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1 ===\n"
+  printf("=== fumosay ver. 1.1.1 ===\n"
          "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
@@ -191,7 +191,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
     set_expression(5); break;
   case 'b':
     set_expression(6); break;
-  case 'r':
+  case 'r':;
     int r = rand() % EXPRESSION_COUNT;
     set_expression(r);
     break;
@@ -352,7 +352,7 @@ int main(int argc, char **argv) {
   char opt;
   while ((opt = getopt(argc, argv, "hlngc::E:W:f:")) != -1) {
     switch (opt) {
-    case 'h':
+    case 'h':;
       fumo_who helper_fumo = rand() % FUMO_COUNT;
       helpInfo(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
@@ -368,7 +368,7 @@ int main(int argc, char **argv) {
     case 'W':
       MAX_WIDTH = no_wrap ? MAX_WIDTH : numberize(optarg);
       break;
-    case 'f':
+    case 'f':;
       char *token = strtok(optarg, ",");
       short choice_count = 0;
       short *choices = NULL;
@@ -402,7 +402,7 @@ int main(int argc, char **argv) {
         custom_colour.B = (short) strtol(next_token, NULL, 0);
       }
       break;
-    case 'E':
+    case 'E':;
       int optlen = strlen(optarg);
       if (optlen > 1) {
         // use custom expression

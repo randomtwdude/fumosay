@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumos!<br>
-  23 adorable fumos come to your machine!
+  25 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen Patchouli smiling like a gremlin?
 - Fast & efficient<br>
@@ -46,20 +46,24 @@ The fumos are designed with the font Cascadia Code.
   - Inu Sakuya
   - Moriya Suwako
   - Hong Meiling
+  - Ibuki Suika
+  - Yorigami Shion
 </details>
 
 ## Updates
-More or less frequent updates. See [changelog](changelog.md).
+More or less weekly update. See [changelog](changelog.md).
 
 ## Install
-Fumosay is now on the Arch User Repository! `paru fumosay`<br>
+Fumosay is now on the Arch User Repository: `paru fumosay`<br>
 For other Linux users:
 ```
+git clone https://github.com/randomtwdude/fumosay.git
+cd fumosay
 ./configure
 make
 make install
 ```
-Executable available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
+Executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
 
 ## Use
 `fumosay [message]` or pipe something in: `foo | fumosay`<br>

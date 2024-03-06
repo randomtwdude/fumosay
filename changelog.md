@@ -1,3 +1,6 @@
+### v1.1.1 - 2024/03/06
+With this update we begin the quest to add every Touhou fumo... with Suika and Shion!
+
 ### v1.1 - 2024/02/26
 Just a minor update because no classes.
 - The `-c` option now accepts optional custom colors. For example, `-c200,150,230` gives a nice purple.
