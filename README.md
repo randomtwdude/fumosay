@@ -64,7 +64,7 @@ make install
 Executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
 
 ## Use
-`fumosay [message]` or pipe something in: `foo | fumosay`<br>
+`fumosay [message]` or pipe something in (e.g. [gensoquote](https://github.com/dmyTRUEk/gensoquote)): `gensoquote | fumosay`<br>
 For help, `fumosay -h`.
 Man page available with `man fumosay`.
 
