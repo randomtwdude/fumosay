@@ -65,10 +65,10 @@ For other Linux users:
 ```
 ./configure
 make
-make install
+sudo make install
 ```
 
-Precompiled executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
+Precompiled executable (`v1.1.2`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.2w), too.
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
