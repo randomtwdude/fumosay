@@ -59,7 +59,7 @@ More or less weekly update. See [changelog](changelog.md).
 ## Install
 Fumosay is now on the Arch User Repository: `paru fumosay`<br>
 For other Linux users:
-1. Download the latest package from the release section (on the right)
+1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section (on the right)
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
 3. `cd fumosay-{version}`
 ```
@@ -73,7 +73,7 @@ Precompiled executable (`v1.0`) available for [Windows](https://github.com/rando
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
 ### `fsgq` fumosay-gensoquote wrapper script
-`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the release section.<br>
+`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the [release](https://github.com/randomtwdude/fumosay/releases) section.<br>
 
 To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character like `./fsgq.sh marisa`.
 
