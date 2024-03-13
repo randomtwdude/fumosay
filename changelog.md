@@ -1,3 +1,16 @@
+### v1.1.2 - 2024/03/13
+- Added 3 new fumos. (28/51)<br>
+  Welcome Chen, Ran, and Rumia!
+- Switched the random source to `arc4random`.<br>
+  No longer produces the same result when run twice in one second.
+- Minor tweaks for Reimu.
+- FIXED: specifying `-f` with unrecognised names causing a crash due to division by zero.
+- FIXED: specifying `-c` with less than 3 numbers causing out-of-bound memory access.
+- FIXED: accidentally pressed TAB on Flandre while editing...
+- Flandre Scarlet now goes by her full name.
+- Changed default color of Yukari to a lighter purple.
+- Introducing `fsgq`, the fumosay-gensoquote wrapper script.
+
 ### v1.1.1 - 2024/03/06
 With this update we begin the quest to add every Touhou fumo... with Suika and Shion!
 

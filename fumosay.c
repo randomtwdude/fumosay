@@ -1,10 +1,9 @@
-// -- fumosay v1.1.1 --
+// -- fumosay v1.1.2 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
 /* ===== INCLUDES ===== */
 #include <ctype.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -43,7 +42,7 @@ typedef int fumo_who;
 #define MAX(a,b) (a > b ? a : b)
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1.1 ===\n"
+  printf("=== fumosay ver. 1.1.2 ===\n"
          "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
@@ -117,6 +116,7 @@ fumo_who fumo_picker(char *str) {
   while (i < FUMO_COUNT) {
     char *fm = strdup(FUMO_LIST[i].name);
     fm[0] = tolower(fm[0]);
+    // extra words in query is fine
     if (strstr(str, fm) != NULL) {
       free(fm);
       break;
@@ -192,7 +192,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
   case 'b':
     set_expression(6); break;
   case 'r':;
-    int r = rand() % EXPRESSION_COUNT;
+    int r = arc4random_uniform(EXPRESSION_COUNT);
     set_expression(r);
     break;
   default:
@@ -339,11 +339,10 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
 
 int main(int argc, char **argv) {
   // init
-  srand(getpid());
   bool no_wrap = false;
   bool display_name = false;
-  bool colour = false;
-  color custom_colour = {-1, -1, -1};
+  char colour = 0;
+  color custom_colour = {0, 0, 0};
   char expr = 0;
   char custom_expr[30] = {0};
   fumo_who fm = -1;
@@ -353,7 +352,7 @@ int main(int argc, char **argv) {
   while ((opt = getopt(argc, argv, "hlngc::E:W:f:")) != -1) {
     switch (opt) {
     case 'h':;
-      fumo_who helper_fumo = rand() % FUMO_COUNT;
+      fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
       helpInfo(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
       fumofumo(helper_fumo);
@@ -380,26 +379,27 @@ int main(int argc, char **argv) {
         }
         token = strtok(NULL, ",");
       }
-      fm = choices[rand() % choice_count];
-      free(choices);
+      if (choices) {
+        fm = choices[arc4random_uniform(choice_count)];
+        free(choices);
+      }
       break;
     case 'g':
       display_name = true;
       break;
     case 'c':
-      colour = true;
+      colour = 1;
       if (optarg) {
+        colour = 2;
         // custom color values
-        char *next_token;
-        custom_colour.R = (short) strtol(optarg, &next_token, 0);
-        while (!isdigit(*next_token)) {
-          next_token++;
+        char *token = strtok(optarg, " ,.;/|");
+        custom_colour.R = strtol(token, NULL, 0);
+        if (token = strtok(NULL, " ,.;/|")) {
+          custom_colour.G = strtol(token, NULL, 0);
         }
-        custom_colour.G = (short) strtol(next_token, &next_token, 0);
-        while (!isdigit(*next_token)) {
-          next_token++;
+        if (token = strtok(NULL, " ,.;/|")) {
+          custom_colour.B = strtol(token, NULL, 0);
         }
-        custom_colour.B = (short) strtol(next_token, NULL, 0);
       }
       break;
     case 'E':;
@@ -458,6 +458,9 @@ int main(int argc, char **argv) {
         token = getInput(stdin, 10);
         if (!token) {
           printf("Something has gone terribly wrong! (malloc failed)\n");
+          fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
+          fumo_expr(helper_fumo, expr, custom_expr);
+          fumofumo(helper_fumo);
           exit(EXIT_FAILURE);
         }
         if (strlen(token) == 0) {
@@ -494,19 +497,17 @@ int main(int argc, char **argv) {
 
   // choose a fumo if not already chosen
   if (fm == -1) {
-    fm = rand() % FUMO_COUNT;
+    fm = arc4random_uniform(FUMO_COUNT);
   }
 
   // finalize expression
   fumo_expr(fm, expr, custom_expr);
 
   // color
-  if (colour) {
-    if (custom_colour.R != -1) {
-      SET_COLOR(custom_colour.R, custom_colour.G, custom_colour.B);
-    } else {
-      SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
-    }
+  if (colour == 1) {
+    SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+  } else if (colour == 2) {
+    SET_COLOR(custom_colour.R, custom_colour.G, custom_colour.B);
   }
 
   // CYOA mode

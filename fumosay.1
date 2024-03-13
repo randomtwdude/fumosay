@@ -1,15 +1,15 @@
-.TH fumosay 1 "2024 Feb 26" "version 1.1"
+.TH fumosay 1 "2024 Mar 13" "version 1.1.2"
 .SH NAME
 fumosay - funky talking fumofumos
 
 .SH SYNOPSIS
 fumosay
-.BI "[-hlngc] [-W " "column" "] [-f " "name(s)" "] [-E " "expression" "]"
+.BI "[-hlng] [-c" "color" "] [-W " "column" "] [-f " "name(s)" "] [-E " "expression" "]"
 
 .SH EXAMPLES
 .IP "fumosay Hello world!"
 .IP "fortune | fumosay -c -f alice,marisa -E 3"
-Have Alice Margatroid or Marisa Kirisame read out the output of fortune, with colored text and a smile.
+Have Alice or Marisa read out the output of fortune, with colored text and a smile.
 
 .SH DESCRIPTION
 .I fumosay
@@ -27,7 +27,7 @@ Disable word-wrapping, preserving white-spaces and line breaks. Allowing the fum
 Display a simple prompt at the top of the message, like a video game dialogue.
 .TP
 .BI "-c" "R,G,B"
-Color the text with a color that vaguely represents the fumo. Optionally, specify an RGB color of your own, there are no spaces in the text of this option.
+Color the text with a color that vaguely represents the fumo. Optionally, specify an RGB color of your own, there are no spaces after the character c.
 .TP
 .BR "-W " "column"
 Specify where the message should be word-wrapped, the default is 80. This option is

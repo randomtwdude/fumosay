@@ -1,5 +1,5 @@
 # fumosay
-fumosay is like the classic cowsay, but featuring funky fumos, written in C.
+Like the classic cowsay, but featuring Touhou fumos, written in C.
 
 ```
 Written in the spirit of funkyness.
@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumos!<br>
-  25 adorable fumos come to your machine!
+  28 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen Patchouli smiling like a gremlin?
 - Fast & efficient<br>
@@ -48,6 +48,9 @@ The fumos are designed with the font Cascadia Code.
   - Hong Meiling
   - Ibuki Suika
   - Yorigami Shion
+  - Chen
+  - Ran Yakumo
+  - Rumia
 </details>
 
 ## Updates
@@ -55,18 +58,27 @@ More or less weekly update. See [changelog](changelog.md).
 
 ## Install
 Fumosay is now on the Arch User Repository: `paru fumosay`<br>
-For other Linux users: download and extract the package from the release section and then...
+For other Linux users:
+1. Download the latest package from the release section (on the right)
+2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
+3. `cd fumosay-{version}`
 ```
 ./configure
 make
 make install
 ```
-Executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
+
+Precompiled executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
 
 ## Use
-`fumosay [message]` or pipe something in: `foo | fumosay`<br>
-For help, `fumosay -h`.
-Man page available with `man fumosay`.
+- `fumosay Hello World!`; `fumosay -n < textfile`; `echo Hi | fumosay -f tenshi`
+### `fsgq` fumosay-gensoquote wrapper script
+`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the release section.<br>
+
+To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character like `./fsgq.sh marisa`.
+
+> :arrow_right: `fsgq` gets quotes at random until one matches your character, it might take a second or two.
+> :warning: `fumosay`, unlike `gensoquote`, is not memory-safe.
 
 Have fun!
 
