@@ -71,13 +71,13 @@ make install
 Precompiled executable (`v1.0`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.0w), too.
 
 ## Use
-- `fumosay Hello World!`; `fumosay -n < textfile`; `echo Hi | fumosay -f tenshi`
+- `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
 ### `fsgq` fumosay-gensoquote wrapper script
 `fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the release section.<br>
 
 To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character like `./fsgq.sh marisa`.
 
-> :arrow_right: `fsgq` gets quotes at random until one matches your character, it might take a second or two.
+> :arrow_right: `fsgq` gets quotes at random until one matches your character, it might take a second or two.<br>
 > :warning: `fumosay`, unlike `gensoquote`, is not memory-safe.
 
 Have fun!
