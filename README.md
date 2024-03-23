@@ -79,7 +79,7 @@ For everyone else, Actually Portable Executable (`v1.1.3`) [available](https://g
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
 ### `fsgq` fumosay-gensoquote wrapper script
-`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the [release](https://github.com/randomtwdude/fumosay/releases) section.<br>
+`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the [release](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.2) section.<br>
 
 To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character like `./fsgq.sh marisa`.
 
