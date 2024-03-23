@@ -1,4 +1,6 @@
-// This file contains alternate functions for use when compiled for Windows
+// This file is DEPRECATED in version 1.1.3.
+/* getline is provided by Cosmopolitan libc;
+   replace_tab no longer uses POSIX specific functions */
 
 /* The original code is public domain -- Will Hartung 4/9/09 */
 /* Modifications, public domain as well, by Antti Haapala, 11/10/17

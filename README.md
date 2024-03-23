@@ -8,14 +8,16 @@ Written in the spirit of funkyness.
 <img src="https://github.com/randomtwdude/fumosay/assets/105645765/2375b4d5-abe7-47ef-97c7-2fedc9ba84a9" width=750>
 
 ## Features
-- Fumos!<br>
-  28 adorable fumos come to your machine!
+- Fumo<br>
+  32 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen Patchouli smiling like a gremlin?
 - Fast & efficient<br>
   Glorious C speeds.
 - Fancy algorithms<br>
   Uses a minimum raggedness algorithm like TeX. (no other fancies of TeX though)
+- Portable<br>
+  Runs on almost all your systems thanks to [Cosmopolitan libc](https://github.com/jart/cosmopolitan).
 
 ## Fumos
 The fumos are designed with the font Cascadia Code.
@@ -51,6 +53,10 @@ The fumos are designed with the font Cascadia Code.
   - Chen
   - Ran Yakumo
   - Rumia
+  - Reisen Udongein Inaba
+  - Yagokoro Eirin
+  - Kazami Yuuka
+  - Hata no Kokoro
 </details>
 
 ## Updates
@@ -68,7 +74,7 @@ make
 sudo make install
 ```
 
-Precompiled executable (`v1.1.2`) available for [Windows](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.2w), too.
+For everyone else, Actually Portable Executable (`v1.1.3`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.3).
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`

@@ -1,3 +1,13 @@
+### v1.1.3 - 2024/03/23
+This update is much delayed because it kept segfaulting. Unsigned integers and arithmetics DO NOT mix.
+- Brought 4 new fumos. (32/51)<br>
+  Friends from the Moon - Reisen (the Gensokyo one) and Eirin.
+  Accesories included - Yuuka with a flower and Kokoro with her mask.
+- A little bit cleaner code.
+- Windows support is now provided by [Cosmopolitan libc](https://github.com/jart/cosmopolitan)<br>
+  This one file should run on Linux, Windows, Mac OS, and (Free/Open/Net)BSD, really cool.<br>
+  Bonus: won't be misidentified as a virus.
+
 ### v1.1.2 - 2024/03/13
 - Added 3 new fumos. (28/51)<br>
   Welcome Chen, Ran, and Rumia!
