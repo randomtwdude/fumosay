@@ -11,7 +11,7 @@ Written in the spirit of funkyness.
 - Fumo<br>
   32 adorable fumos come to your machine!
 - Expressions<br>
-  Have you seen Patchouli smiling like a gremlin?
+  Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
   Glorious C speeds.
 - Fancy algorithms<br>
@@ -65,13 +65,14 @@ More or less weekly update. See [changelog](changelog.md).
 ## Install
 Fumosay is now on the Arch User Repository: `paru fumosay`<br>
 For other Linux users:
-1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section (on the right)
+1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section.
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
 3. `cd fumosay-{version}`
 ```
 ./configure
 make
 sudo make install
+# note: the default installation location needs sudo; to change it, run ./configure --prefix=/another/path
 ```
 
 For everyone else, Actually Portable Executable (`v1.1.3`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.3).
@@ -79,12 +80,10 @@ For everyone else, Actually Portable Executable (`v1.1.3`) [available](https://g
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
 ### `fsgq` fumosay-gensoquote wrapper script
-`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the [release](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.2) section.<br>
+`fsgq.sh` is a shell script that displays Touhou quotes from [gensoquote](https://github.com/dmyTRUEk/gensoquote) with the corresponding fumo. Grab it from the [release](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.3) section.<br>
 
-To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character like `./fsgq.sh marisa`.
-
-> :arrow_right: `fsgq` gets quotes at random until one matches your character, it might take a second or two.<br>
-> :warning: `fumosay`, unlike `gensoquote`, is not memory-safe.
+To use it, give it execute permission: `chmod +x fsgq.sh`, then simply run it: `./fsgq.sh`. You can also choose a specific character and pass flags like `./fsgq.sh marisa -gc`.
+> :warning: `fumosay`, unlike `gensoquote`, is not memory-safe :p
 
 Have fun!
 
