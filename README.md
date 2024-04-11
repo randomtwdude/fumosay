@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumo<br>
-  32 adorable fumos come to your machine!
+  35 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
@@ -57,6 +57,9 @@ The fumos are designed with the font Cascadia Code.
   - Yagokoro Eirin
   - Kazami Yuuka
   - Hata no Kokoro
+  - Inubashiri Momiji
+  - Himekaidou Hatate
+  - Kawashiro Nitori
 </details>
 
 ## Updates

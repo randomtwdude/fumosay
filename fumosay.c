@@ -1,4 +1,4 @@
-// -- fumosay v1.1.3 --
+// -- fumosay v1.1.4 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -33,11 +33,14 @@ typedef int fumo_who;
 #define RESET_COLOR printf("\033[0m");
 
 /* ===== FUNCTIONS ===== */
+
+/* utility functions */
+
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1.3 ===\n"
+  printf("=== fumosay ver. 1.1.4 ===\n"
          "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
@@ -99,6 +102,22 @@ char *getInput(FILE *st, size_t size) {
   str[len++] = '\0';
   return realloc(str, len);
 }
+
+// Replace tabs with spaces
+char *replace_tab(char *token, short tabstop) {
+  int size_byte = strlen(token) + 1;
+  for (int i = 0; token[i]; i++) {
+    if (token[i] == '\t') {
+      short shift = tabstop - (i % tabstop);
+      token = realloc(token, (size_byte += shift - 1));
+      memmove(&token[i + shift], &token[i + 1], size_byte - shift - i);
+      memset(&token[i], 32, shift);
+    }
+  }
+  return token;
+}
+
+/* fumo functions */
 
 // Pick a fumo
 fumo_who fumo_picker(char *str) {
@@ -214,6 +233,8 @@ void fumo_list() {
 void fumofumo(fumo_who fm) {
   fputs(FUMO_LIST[fm].fumo, stdout);
 }
+
+/* word processing functions */
 
 // should probably integrate this into word wrapper somehow
 int longestLineWidth(int argc, char **argv) {
@@ -406,28 +427,18 @@ int main(int argc, char **argv) {
     char *buffer = NULL;
     size_t buf_line, line;
     while (getline(&buffer, &buf_line, stdin) > -1) {
-      // replace tabs with 4 spaces
       char *token = strdup(buffer);
-      // unsigned SUCKS
-      int size_byte = buf_line;
-      for (int i = 0; token[i]; i++) {
-        if (token[i] == '\t') {
-          token = realloc(token, (size_byte += 3));
-          memmove(&token[i + 4], &token[i + 1], size_byte - 4 - i);
-          token[i] = token[i + 1] = token[i + 2] = token[i + 3] = ' ';
-        }
-      }
-      word_vector[word_count++] = token;
+      token = replace_tab(token, 8);
       word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
-    } // while: one line
-    word_vector = realloc(word_vector, word_count * sizeof(char *));
+      word_vector[word_count++] = token;
+    } // while
     free(buffer);
   } else if (optind == argc) { // read one word at a time
     while (1) {
       char *token;
       token = getInput(stdin, 10);
       if (!token) {
-        printf("Something has gone terribly wrong! (malloc failed)\n");
+        printf("Something has gone terribly wrong!\n");
         fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
         fumo_expr(helper_fumo, expr, custom_expr);
         fumofumo(helper_fumo);
@@ -436,10 +447,9 @@ int main(int argc, char **argv) {
       if (strlen(token) == 0) {
         break;
       }
-      word_vector[word_count++] = token;
       word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
+      word_vector[word_count++] = token;
     }
-    word_vector = realloc(word_vector, word_count * sizeof(char *));
   } else { // read from cmd line arguments
     word_count = argc - optind;
 
@@ -447,21 +457,30 @@ int main(int argc, char **argv) {
     word_vector = malloc(word_count * sizeof(char *));
     memcpy(word_vector, argv + optind, word_count * sizeof(char *));
 
+    // tabs
+    for (int i = 0; i < word_count; i++) {
+      if (strchr(word_vector[i], '\t') == NULL) {
+        continue;
+      }
+      // this is a memory leak, but better than
+      // having to have another copy of every word
+      char *token = strdup(word_vector[i]);
+      word_vector[i] = replace_tab(token, 8);
+    }
+
     // cut words that are too long
-    if (!no_wrap) {
-      for (int i = 0; i < word_count; i++) {
-        if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
-          // move things around
-          word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
-          memmove(&word_vector[i + 2],
-                  &word_vector[i + 1],
-                  (word_count - i - 2) * sizeof(char *));
-          word_vector[i + 1] = malloc(strlen(word_vector[i]) - MAX_WIDTH + 2);
-          memmove(word_vector[i + 1],
-                  word_vector[i] + MAX_WIDTH - 1,
-                  strlen(word_vector[i]) - MAX_WIDTH + 2);
-          word_vector[i][MAX_WIDTH - 1] = 0;
-        }
+    for (int i = 0; !no_wrap && i < word_count; i++) {
+      if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
+        // move things around
+        word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
+        memmove(&word_vector[i + 2],
+                &word_vector[i + 1],
+                (word_count - i - 2) * sizeof(char *));
+        word_vector[i + 1] = malloc(strlen(word_vector[i]) - MAX_WIDTH + 2);
+        memmove(word_vector[i + 1],
+                word_vector[i] + MAX_WIDTH - 1,
+                strlen(word_vector[i]) - MAX_WIDTH + 2);
+        word_vector[i][MAX_WIDTH - 1] = 0;
       }
     }
   }

@@ -1,3 +1,10 @@
+### v1.1.4 - 2024/04/11
+It's the Youkai Mountain special.
+- Welcome 3 new fumos!<br>
+  We have Momiji, Hatate, and Nitori.
+- Tabs now behave properly (they align)<br>
+  This works in messages from command line arguments, too. (unlike newlines, which continue to be broken)
+
 ### v1.1.3 - 2024/03/23
 This update is much delayed because it kept segfaulting. Unsigned integers and arithmetics DO NOT mix.
 - Brought 4 new fumos. (32/51)<br>
