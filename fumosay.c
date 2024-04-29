@@ -1,4 +1,4 @@
-// -- fumosay v1.1.4 --
+// -- fumosay v1.1.5 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -40,7 +40,7 @@ typedef int fumo_who;
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1.4 ===\n"
+  printf("=== fumosay ver. 1.1.5 ===\n"
          "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
@@ -48,10 +48,10 @@ void helpInfo(fumo_who fm) {
          "       The default is 80.\n"
          "-f     Pick fumos by names.\n"
          "-E     Change the expression (mouth string) of the fumo.\n"
-         "       Use a one-letter preset below or enter your own (like \"          *_*\")!\n"
+         "       Use a one-letter preset below or enter your own!\n"
          "       Presets: '1', '2', '3', '4', 'v', 'w', 'b', 'r'(random)\n"
          "-g     Display the character's name above the text box like a story game.\n"
-         "-c     Color the text. (Optional) Specify an RGB color like \"-c255,255,255\".\n"
+         "-c     Color the text. Optionally, specify an RGB color like \"-c255,255,255\".\n"
          "-h     Display this message.\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project, say hi to ");
@@ -106,7 +106,7 @@ char *getInput(FILE *st, size_t size) {
 // Replace tabs with spaces
 char *replace_tab(char *token, short tabstop) {
   int size_byte = strlen(token) + 1;
-  for (int i = 0; token[i]; i++) {
+  for (int i = 0; token[i]; i += 1) {
     if (token[i] == '\t') {
       short shift = tabstop - (i % tabstop);
       token = realloc(token, (size_byte += shift - 1));
@@ -122,7 +122,7 @@ char *replace_tab(char *token, short tabstop) {
 // Pick a fumo
 fumo_who fumo_picker(char *str) {
   // we want to compare the lower case version
-  for (int i = 0; i < strlen(str); i++) {
+  for (int i = 0; i < strlen(str); i += 1) {
     str[i] = tolower(str[i]);
   }
   fumo_who i = 0;
@@ -135,7 +135,7 @@ fumo_who fumo_picker(char *str) {
       break;
     }
     free(fm);
-    i++;
+    i += 1;
   }
 
   if (i == FUMO_COUNT) {
@@ -224,7 +224,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
 // Lists fumos
 void fumo_list() {
   printf("There are %d fumos!\n-----\n", FUMO_COUNT);
-  for (int i = 0; i < FUMO_COUNT; i++) {
+  for (int i = 0; i < FUMO_COUNT; i += 1) {
     puts(FUMO_LIST[i].name);
   }
 }
@@ -240,7 +240,7 @@ void fumofumo(fumo_who fm) {
 int longestLineWidth(int argc, char **argv) {
   size_t cur_line = 0, max_line = 0;
   size_t word_len;
-  for (int i = 0; i < argc; i++) {
+  for (int i = 0; i < argc; i += 1) {
     word_len = strlen(argv[i]);
     cur_line += word_len + 1;
     if (cur_line > MAX_WIDTH) {
@@ -257,7 +257,7 @@ int longestLineWidth(int argc, char **argv) {
 
 // Print some spaces and the right parenthesis
 void paddedBreak(int padding) {
-  for (int i = 0; i < padding; i++) {
+  for (int i = 0; i < padding; i += 1) {
     printf(" ");
   }
   printf(")\n");
@@ -268,7 +268,7 @@ void paddedBreak(int padding) {
 void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_wrap, bool cmd) {
 
   int *offsets = calloc((count + 1), sizeof(int));
-  for (int i = 1; i < count + 1; i++) {
+  for (int i = 1; i < count + 1; i += 1) {
     offsets[i] = offsets[i - 1] + strlen(words[i - 1]);
   }
 
@@ -277,7 +277,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
   minima[0] = 0;
   int *breaks = calloc((count + 1), sizeof(int));
 
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < count; i += 1) {
     int j = i + 1;
     while (j <= count) {
       int w = offsets[j] - offsets[i] + j - i - 1;
@@ -290,7 +290,7 @@ void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_
         minima[j] = cost;
         breaks[j] = i;
       }
-      j++;
+      j += 1;
     }
   }
 

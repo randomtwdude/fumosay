@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumo<br>
-  35 adorable fumos come to your machine!
+  38 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
@@ -60,6 +60,9 @@ The fumos are designed with the font Cascadia Code.
   - Inubashiri Momiji
   - Himekaidou Hatate
   - Kawashiro Nitori
+  - Ibaraki Kasen
+  - Toyosatomimi no Miko
+  - Mononobe no Futo
 </details>
 
 ## Updates
@@ -72,10 +75,8 @@ For other Linux users:
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
 3. `cd fumosay-{version}`
 ```
-./configure
-make
-sudo make install
-# note: the default installation location needs sudo; to change it, run ./configure --prefix=/another/path
+gcc -o fumosay fumosay.c
+# move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
 For everyone else, Actually Portable Executable (`v1.1.3`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.3).

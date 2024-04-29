@@ -1,3 +1,12 @@
+### v1.1.5 - 2024/04/29
+History.
+- Added 3 new fumos!<br>
+  Welcome, Kasen, Miko, and Futo!
+- No longer uses Autotools.<br>
+fsgq:
+- Added to the source tree.
+- Handle characters without quotes.
+
 ### v1.1.4 - 2024/04/11
 It's the Youkai Mountain special.
 - Welcome 3 new fumos!<br>
