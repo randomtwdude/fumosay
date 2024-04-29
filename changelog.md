@@ -2,7 +2,8 @@
 History.
 - Added 3 new fumos!<br>
   Welcome, Kasen, Miko, and Futo!
-- No longer uses Autotools.<br>
+- No longer uses Autotools.
+
 fsgq:
 - Added to the source tree.
 - Handle characters without quotes.
