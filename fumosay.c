@@ -1,4 +1,4 @@
-// -- fumosay v1.1.5 --
+// -- fumosay v1.1.6 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -40,7 +40,7 @@ typedef int fumo_who;
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1.5 ===\n"
+  printf("=== fumosay ver. 1.1.6 ===\n"
          "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
@@ -104,7 +104,7 @@ char *getInput(FILE *st, size_t size) {
 }
 
 // Replace tabs with spaces
-char *replace_tab(char *token, short tabstop) {
+char *replaceTab(char *token, short tabstop) {
   int size_byte = strlen(token) + 1;
   for (int i = 0; token[i]; i += 1) {
     if (token[i] == '\t') {
@@ -230,7 +230,7 @@ void fumo_list() {
 }
 
 // Fumo!
-void fumofumo(fumo_who fm) {
+void fumo_fumo(fumo_who fm) {
   fputs(FUMO_LIST[fm].fumo, stdout);
 }
 
@@ -265,7 +265,7 @@ void paddedBreak(int padding) {
 
 // Shiny "better" word-wrapping
 // Based on the shortest path algo. (xxyxyz.org/line-breaking)
-void word_wrapper(int count, char **words, size_t width, size_t bubble, bool no_wrap, bool cmd) {
+void wordWrapper(int count, char **words, size_t width, size_t bubble, bool no_wrap, bool cmd) {
 
   int *offsets = calloc((count + 1), sizeof(int));
   for (int i = 1; i < count + 1; i += 1) {
@@ -352,7 +352,7 @@ int main(int argc, char **argv) {
       fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
       helpInfo(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
-      fumofumo(helper_fumo);
+      fumo_fumo(helper_fumo);
       exit(EXIT_SUCCESS);
     case 'l':
       fumo_list();
@@ -428,7 +428,7 @@ int main(int argc, char **argv) {
     size_t buf_line, line;
     while (getline(&buffer, &buf_line, stdin) > -1) {
       char *token = strdup(buffer);
-      token = replace_tab(token, 8);
+      token = replaceTab(token, 8);
       word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
       word_vector[word_count++] = token;
     } // while
@@ -441,7 +441,7 @@ int main(int argc, char **argv) {
         printf("Something has gone terribly wrong!\n");
         fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
         fumo_expr(helper_fumo, expr, custom_expr);
-        fumofumo(helper_fumo);
+        fumo_fumo(helper_fumo);
         exit(EXIT_FAILURE);
       }
       if (strlen(token) == 0) {
@@ -465,7 +465,7 @@ int main(int argc, char **argv) {
       // this is a memory leak, but better than
       // having to have another copy of every word
       char *token = strdup(word_vector[i]);
-      word_vector[i] = replace_tab(token, 8);
+      word_vector[i] = replaceTab(token, 8);
     }
 
     // cut words that are too long
@@ -526,7 +526,7 @@ int main(int argc, char **argv) {
         *nl = 0; // strip the last newline of the paragraph
       }
       process += last_section;
-      word_wrapper(cur_section,
+      wordWrapper(cur_section,
                    process,
                    bubble_width - 2,
                    bubble_width,
@@ -549,7 +549,7 @@ int main(int argc, char **argv) {
   }
 
   // fumo!
-  fumofumo(fm);
+  fumo_fumo(fm);
 
   free(word_vector);
   return 0;

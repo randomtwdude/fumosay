@@ -1,3 +1,14 @@
+### v1.1.6 - 2024/05/14
+Help me, Eirin!
+- Added 3 new fumos!<br>
+  Welcome Renko, Maribel, and Junko to the roster!
+- Touched up some other fumos.<br>
+  Kaguya, Shion, Eirin, and Miko looking nicer.
+
+fsgq:
+- Fixed fumosay installation (hopefully)
+- Fixed Gensoquote error message showing
+
 ### v1.1.5 - 2024/04/29
 History.
 - Added 3 new fumos!<br>

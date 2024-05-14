@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ## fsgq 	- fumosay & gensoquote wrapper script
-# ver 3 	- Apr 29 2024
-# target 	- fumosay v1.1.5 + gensoquote v3+
+# ver 4 	- May 14 2024
+# target 	- fumosay v1.1.6 + gensoquote v3+
 
 if [[ "$1" =~ help ]]; then
 	printf -- "fsgq - fumosay & gensoquote wrapper script\n"
@@ -31,7 +31,7 @@ if ! command -v -- fumosay > /dev/null 2>&1; then
 		fi
 
 		# CHANGE ME
-		ver=1.1.4 # LOOK HERE! <=======
+		ver=1.1.6 # LOOK HERE! <=======
 
 		printf -- "===> Retreiving package...\n"
 		workdir=$(mktemp -d)
@@ -41,13 +41,13 @@ if ! command -v -- fumosay > /dev/null 2>&1; then
 		wget "https://github.com/randomtwdude/fumosay/releases/download/fumo${ver}/fumosay-${ver}.tar.gz" -q --show-progress \
 		|| curl -OL "https://github.com/randomtwdude/fumosay/releases/download/fumo${ver}/fumosay-${ver}.tar.gz"
 
-		if [[ $(sha256sum fumosay-${ver}.tar.gz | awk '{print $1;}') -ne "fc833f06b3a21c3145968205a224030be66072db56b9a8f2b407ebca057e12ba" ]]; then
+		if [[ $(sha256sum fumosay-${ver}.tar.gz | awk '{print $1;}') -ne "35c7bfd91aaecf200fb2e4725828b634e6d439f68f93133a2894136051a9fb64" ]]; then
 			printf -- "Integrity check failed!\n"
 			exit 2
 		fi
 
 		tar xf "fumosay-${ver}.tar.gz" && cd "fumosay-${ver}" || exit 2
-		./configure --prefix=$location && make && make install || exit 2
+		gcc -o fumosay fumosay.c && sudo install -Dm755 fumosay -t "$location" || exit 2
 		printf -- "===> fumosay installed to %s !\n" "$location"
 
 		if ! command -v -- fumosay > /dev/null 2>&1; then
@@ -142,8 +142,12 @@ while true; do
 		fumo="Sakuya"
 	fi
 
+	if [[ $debug_mode ]]; then
+		printf -- "[DEBUG] Called character: \"%s\"\n" "$fumo"
+	fi
+
 	# call gensoquote
-	gq=$(gensoquote -c $fumo)
+	gq=$(gensoquote -c $fumo 2>/dev/null)
 
 	# check
 	if ! [[ -n $gq ]]; then
