@@ -1,3 +1,9 @@
+### v1.1.7 - 2024/05/20
+Ghost of Tsushima may affect the release schedule.
+- Added 3 new fumos!<br>
+  Shiki Eiki, Keiki, and Hina joins the roster!
+- Added `-v`: display version.
+
 ### v1.1.6 - 2024/05/14
 Help me, Eirin!
 - Added 3 new fumos!<br>

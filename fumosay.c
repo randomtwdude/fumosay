@@ -1,9 +1,8 @@
-// -- fumosay v1.1.6 --
+// -- fumosay v1.1.7 --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
 /* ===== INCLUDES ===== */
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,7 +20,7 @@ typedef struct color {
 typedef struct fumo_data {
   char  *fumo; // fumo ascii art
   char  *name; // display & search name
-  color color;
+  color color; // [object Object]
 } fumo_data;
 
 typedef int fumo_who;
@@ -40,8 +39,9 @@ typedef int fumo_who;
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 void helpInfo(fumo_who fm) {
-  printf("=== fumosay ver. 1.1.6 ===\n"
-         "Usage: fumosay [-hlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
+  printf("fumosay: funky talking fumofumos\n"
+         "--------------------------------\n"
+         "Usage: fumosay [-hvlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
          "-W     Specify roughly where the message should be wrapped.\n"
@@ -53,6 +53,8 @@ void helpInfo(fumo_who fm) {
          "-g     Display the character's name above the text box like a story game.\n"
          "-c     Color the text. Optionally, specify an RGB color like \"-c255,255,255\".\n"
          "-h     Display this message.\n"
+         "-v     Show version.\n"
+         "--------------------------------\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project, say hi to ");
 
@@ -121,29 +123,30 @@ char *replaceTab(char *token, short tabstop) {
 
 // Pick a fumo
 fumo_who fumo_picker(char *str) {
-  // we want to compare the lower case version
-  for (int i = 0; i < strlen(str); i += 1) {
-    str[i] = tolower(str[i]);
-  }
   fumo_who i = 0;
+
+  // first pass exact match (so Keiki doesn't get undercut by Eiki)
   while (i < FUMO_COUNT) {
-    char *fm = strdup(FUMO_LIST[i].name);
-    fm[0] = tolower(fm[0]);
-    // extra words in query is fine
-    if (strstr(str, fm) != NULL) {
-      free(fm);
-      break;
+    if (strcasecmp(str, FUMO_LIST[i].name) == 0) {
+      return i;
     }
-    free(fm);
+    i += 1;
+  }
+
+  // second pass accepting extra words in query
+  while (i < FUMO_COUNT) {
+    if (strcasestr(str, FUMO_LIST[i].name) != NULL) {
+      return i;
+    }
     i += 1;
   }
 
   if (i == FUMO_COUNT) {
     // alternate names we may want to check
-    #define check_name(name, id) {          \
-      if (strstr(str, #name) != NULL) {     \
-        return id;                          \
-      }                                     \
+    #define check_name(name, id) {            \
+      if (strcasestr(str, #name) != NULL) {   \
+        return id;                            \
+      }                                       \
     }
 
     check_name(patchy, 1);
@@ -158,7 +161,6 @@ fumo_who fumo_picker(char *str) {
     printf("Can't find fumo \"%s\"!\n", str);
     return -1;
   }
-
   return i;
 }
 
@@ -343,20 +345,22 @@ int main(int argc, char **argv) {
   char expr = 0;
   char custom_expr[30] = {0};
   fumo_who fm = -1;
+  // for cosmopolitan build, which uses random()
+  // srandom(getpid());
 
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hlngc::E:W:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hvlngc::E:W:f:")) != -1) {
     switch (opt) {
     case 'h':;
       fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
       helpInfo(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
       fumo_fumo(helper_fumo);
-      exit(EXIT_SUCCESS);
+      return 0;
     case 'l':
       fumo_list();
-      exit(EXIT_SUCCESS);
+      return 0;
     case 'n':
       MAX_WIDTH = 100000000;
       no_wrap = true;
@@ -413,6 +417,9 @@ int main(int argc, char **argv) {
         expr = optarg[0];
       }
       break;
+    case 'v':;
+      printf("fumosay v1.1.7\n");
+      return 0;
     } // switch
   }
 

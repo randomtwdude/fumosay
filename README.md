@@ -9,7 +9,7 @@ Written in the spirit of funkyness.
 
 ## Features
 - Fumo<br>
-  41 adorable fumos come to your machine!
+  44 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
@@ -66,6 +66,9 @@ The fumos are designed with the font Cascadia Code.
   - Usami Renko
   - Maribel Hearn
   - Junko
+  - Shiki Eiki
+  - Haniyasushin Keiki
+  - Kagiyama Hina
 </details>
 
 ## Updates
@@ -82,7 +85,7 @@ gcc -o fumosay fumosay.c
 # move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
-For other platforms, Actually Portable Executable (updated to `v1.1.6`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.6).
+For other platforms, Actually Portable Executable (updated to `v1.1.7`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.7).
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
