@@ -132,6 +132,7 @@ fumo_who fumo_picker(char *str) {
     }
     i += 1;
   }
+  i = 0;
 
   // second pass accepting extra words in query
   while (i < FUMO_COUNT) {
