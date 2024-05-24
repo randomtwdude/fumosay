@@ -1,4 +1,5 @@
 ### v1.1.7 - 2024/05/20
+#### 05/24 - fixed fumo_picker() not accepting extra words
 Ghost of Tsushima may affect the release schedule.
 - Added 3 new fumos!<br>
   Shiki Eiki, Keiki, and Hina joins the roster!
