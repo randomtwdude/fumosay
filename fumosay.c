@@ -1,4 +1,4 @@
-// -- fumosay v1.1.7 --
+// -- fumosay --
 // like cowsay, but with funky fumos!
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
@@ -31,6 +31,7 @@ typedef int fumo_who;
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 #define RESET_COLOR printf("\033[0m");
 
+#define VERSION_STRING "fumosay 1.1.8\n"
 /* ===== FUNCTIONS ===== */
 
 /* utility functions */
@@ -121,6 +122,7 @@ char *replaceTab(char *token, short tabstop) {
 
 /* fumo functions */
 
+// TODO: improve this
 // Pick a fumo
 fumo_who fumo_picker(char *str) {
   fumo_who i = 0;
@@ -158,6 +160,7 @@ fumo_who fumo_picker(char *str) {
     check_name(baka, 17);
     check_name(maido, 19);
     check_name(inu, 20);
+    check_name(okuu, 45);
 
     printf("Can't find fumo \"%s\"!\n", str);
     return -1;
@@ -419,7 +422,7 @@ int main(int argc, char **argv) {
       }
       break;
     case 'v':;
-      printf("fumosay v1.1.7\n");
+      printf(VERSION_STRING);
       return 0;
     } // switch
   }

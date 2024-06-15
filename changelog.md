@@ -1,3 +1,12 @@
+### v1.1.8 - 2024/06/15
+Almost there!
+- Added 4 new fumos:<br>
+  Kogasa, Okuu, Rinnosuke, and Hecatia!
+- Tweaks for Youmu and Keiki
+- Technical stuff:<br>
+  code for the Cosmopolitan build is now included in the tar package.<br>
+  Prebuilt binary now works on Android.
+
 ### v1.1.7 - 2024/05/20
 #### 05/24 - fixed fumo_picker() not accepting extra words
 Ghost of Tsushima may affect the release schedule.

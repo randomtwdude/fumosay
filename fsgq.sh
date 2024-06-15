@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ## fsgq 	- fumosay & gensoquote wrapper script
-# ver 5 	- May 20 2024
-# target 	- fumosay v1.1.7 + gensoquote v3+
+# ver 6 	- Jun 15 2024
+# target 	- fumosay v1.1.8 + gensoquote v3+
 
 # Version at line 36.
 
@@ -33,7 +33,7 @@ if ! command -v -- fumosay > /dev/null 2>&1; then
 		fi
 
 		# CHANGE ME
-		ver=1.1.7 # LOOK HERE! <=======
+		ver=1.1.8 # LOOK HERE! <=======
 
 		printf -- "===> Retreiving package...\n"
 		workdir=$(mktemp -d)
@@ -43,7 +43,7 @@ if ! command -v -- fumosay > /dev/null 2>&1; then
 		wget "https://github.com/randomtwdude/fumosay/releases/download/fumo${ver}/fumosay-${ver}.tar.gz" -q --show-progress \
 		|| curl -OL "https://github.com/randomtwdude/fumosay/releases/download/fumo${ver}/fumosay-${ver}.tar.gz"
 
-		if [[ $(sha256sum fumosay-${ver}.tar.gz | awk '{print $1;}') -ne "f8ee29daa18e8772891a3c4db2eb9bd9b8284b887ab9b50bc886268e911bc834" ]]; then
+		if [[ $(sha256sum fumosay-${ver}.tar.gz | awk '{print $1;}') -ne "313f2b9b8801ded055bcf439bda4c7e7e76153f31c01358dbdcd107aab9481f9" ]]; then
 			printf -- "Integrity check failed!\n"
 			exit 2
 		fi
