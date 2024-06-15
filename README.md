@@ -33,7 +33,7 @@ The fumos are designed with the font Cascadia Code.
   - Orin
   - Nue
   - Okina
-  - Chimate
+  - Chimata
 </details>
 
 ## Updates
