@@ -8,8 +8,8 @@ Written in the spirit of funkyness.
 <img src="https://github.com/randomtwdude/fumosay/assets/105645765/2375b4d5-abe7-47ef-97c7-2fedc9ba84a9" width=750>
 
 ## Features
-- Fumo<br>
-  48 adorable fumos come to your machine!
+- ᗜˬᗜ<br>
+  52 adorable fumos come to your machine!
 - Expressions<br>
   Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
@@ -24,15 +24,11 @@ The fumos are designed with the font Cascadia Code.
 
 <details>
   <summary>List of all available fumos!</summary>
-  Every character with a Gift fumo, except (for now):
+  Every character with a Gift fumo (and Inu Sakuya!), except (for now):
 
-  - Seija
-  - Sagume
-  - Nazrin
   - Parsee
   - Orin
   - Nue
-  - Okina
   - Chimata
 </details>
 
@@ -50,7 +46,7 @@ gcc -o fumosay fumosay.c
 # move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
-For other platforms, Actually Portable Executable (updated to `v1.1.8`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.8).
+For other platforms, Actually Portable Executable (updated to `v1.1.9`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.9).
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`

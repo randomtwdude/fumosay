@@ -31,7 +31,7 @@ typedef int fumo_who;
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 #define RESET_COLOR printf("\033[0m");
 
-#define VERSION_STRING "fumosay 1.1.8\n"
+#define VERSION_STRING "fumosay 1.1.9\n"
 /* ===== FUNCTIONS ===== */
 
 /* utility functions */

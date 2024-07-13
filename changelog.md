@@ -1,3 +1,9 @@
+### v1.1.9 - 2024/07/13
+- Added 4 new fumos:<br>
+  Seija, Sagume, Nazrin, and Okina!
+- Hina has a more proper bow now.
+- Added all fumos to the repo.
+
 ### v1.1.8 - 2024/06/15
 Almost there!
 - Added 4 new fumos:<br>
