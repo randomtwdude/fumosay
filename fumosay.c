@@ -18,31 +18,36 @@ typedef struct color {
 } color;
 
 typedef struct fumo_data {
-  char  *fumo; // fumo ascii art
-  char  *name; // display & search name
-  color color; // [object Object]
+  char *fumo;    // fumo ascii art
+  color color;    // [object Object]
+  char  *name[];   // all the names
 } fumo_data;
 
 typedef int fumo_who;
 
 // fumo & expression file
 #include "fumo.fumo"
+// ANSI Rainbow
+#include "rainbow.c"
+// Fumo picker
+#include "fumosearch.c"
 
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 #define RESET_COLOR printf("\033[0m");
 
-#define VERSION_STRING "fumosay 1.1.9\n"
+#define VERSION_STRING "fumosay 1.1.10\n"
 /* ===== FUNCTIONS ===== */
 
 /* utility functions */
 
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
+#define MIN4(a,b,c,d) (MIN(MIN((a),(b)),MIN((c),(d))))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 void helpInfo(fumo_who fm) {
   printf("fumosay: funky talking fumofumos\n"
          "--------------------------------\n"
-         "Usage: fumosay [-hvlng] [-c] [-W column] [-f name] [-E expression] (message)\n"
+         "Usage: fumosay [-hvlngrRb] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
          "-W     Specify roughly where the message should be wrapped.\n"
@@ -52,15 +57,18 @@ void helpInfo(fumo_who fm) {
          "       Use a one-letter preset below or enter your own!\n"
          "       Presets: '1', '2', '3', '4', 'v', 'w', 'b', 'r'(random)\n"
          "-g     Display the character's name above the text box like a story game.\n"
-         "-c     Color the text. Optionally, specify an RGB color like \"-c255,255,255\".\n"
+         "-c     Color message. Optionally, specify RGB like \"-c255,255,255\".\n"
+         "-r     Rainbow message courtesy of Tenkyuu Chimata.\n"
+         "-R     Rainbow fumo as well.\n"
+         "-b     Bold font.\n"
          "-h     Display this message.\n"
          "-v     Show version.\n"
          "--------------------------------\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project, say hi to ");
 
-  SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
-  fputs(FUMO_LIST[fm].name, stdout);
+  SET_COLOR(FUMO_LIST[fm]->color.R, FUMO_LIST[fm]->color.G, FUMO_LIST[fm]->color.B);
+  fputs(FUMO_LIST[fm]->name[0], stdout);
   RESET_COLOR;
   fputs("!\n", stdout);
 }
@@ -75,7 +83,8 @@ int numberize(char *c) {
 }
 
 // Returns one word that's at most a certain length
-char *getInput(FILE *st, size_t size) {
+// _line_ turns this into getline(), max length is adjusted to very large in main()
+char *getInput(FILE *st, size_t size, bool line) {
   size_t len = 0;
   char *str = malloc(size);
   if (!str) {
@@ -83,7 +92,7 @@ char *getInput(FILE *st, size_t size) {
   }
   char ch;
   while ((ch = fgetc(st)) != EOF) {
-    if (ch == ' ' || ch == '\t') {
+    if (!line && (ch == ' ' || ch == '\t')) {
       if (len) {
         break;    // if we have a word, spaces terminate
       } else {
@@ -106,7 +115,7 @@ char *getInput(FILE *st, size_t size) {
   return realloc(str, len);
 }
 
-// Replace tabs with spaces
+// Replace tabs with spaces, REALLOCs token!
 char *replaceTab(char *token, short tabstop) {
   int size_byte = strlen(token) + 1;
   for (int i = 0; token[i]; i += 1) {
@@ -122,50 +131,30 @@ char *replaceTab(char *token, short tabstop) {
 
 /* fumo functions */
 
-// TODO: improve this
 // Pick a fumo
 fumo_who fumo_picker(char *str) {
-  fumo_who i = 0;
-
-  // first pass exact match (so Keiki doesn't get undercut by Eiki)
+  fumo_who i = 0, fumo = -1;
+  int highscore = 0;
   while (i < FUMO_COUNT) {
-    if (strcasecmp(str, FUMO_LIST[i].name) == 0) {
-      return i;
+    int j = 0, name = 0;
+    while (name < 10) {
+      int score = bitap(str, FUMO_LIST[i]->name[j], 2);
+      if (score > highscore) {
+        highscore = score;
+        fumo = i;
+      }
+      j += 1;
+      if (0 == FUMO_LIST[i]->name[j][0]) {
+        break; /* names are ""-terminated */
+      }
+      name += 1;
     }
     i += 1;
   }
-  i = 0;
-
-  // second pass accepting extra words in query
-  while (i < FUMO_COUNT) {
-    if (strcasestr(str, FUMO_LIST[i].name) != NULL) {
-      return i;
-    }
-    i += 1;
+  if (highscore == 0) {
+    printf("ᗜ_ᗜ : We cannot find \"%s\"!\n", str);
   }
-
-  if (i == FUMO_COUNT) {
-    // alternate names we may want to check
-    #define check_name(name, id) {            \
-      if (strcasestr(str, #name) != NULL) {   \
-        return id;                            \
-      }                                       \
-    }
-
-    check_name(patchy, 1);
-    check_name(remi, 10);
-    check_name(snae, 11);
-    check_name(gap, 13);
-    check_name(tenko, 16);
-    check_name(baka, 17);
-    check_name(maido, 19);
-    check_name(inu, 20);
-    check_name(okuu, 45);
-
-    printf("Can't find fumo \"%s\"!\n", str);
-    return -1;
-  }
-  return i;
+  return fumo;
 }
 
 // Set fumo expression, modifies string
@@ -176,7 +165,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
   // use custom expression
   if (custom[0] != 0) {
     while (count < 3) {
-      p = strchr(FUMO_LIST[fm].fumo, 'E');
+      p = strchr(FUMO_LIST[fm]->fumo, 'E');
       if (!p) {
         return;
       }
@@ -188,7 +177,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
   // use presets
   #define set_expression(x) {                           \
     while (count < 3) {                                 \
-      p = strchr(FUMO_LIST[fm].fumo, 'E');              \
+      p = strchr(FUMO_LIST[fm]->fumo, 'E');             \
       if (!p) {                                         \
         return;                                         \
       }                                                 \
@@ -217,7 +206,7 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
     break;
   default:
     while (count < 3) {
-      p = strchr(FUMO_LIST[fm].fumo, 'E');
+      p = strchr(FUMO_LIST[fm]->fumo, 'E');
       if (!p) {
         return;
       }
@@ -229,15 +218,25 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
 
 // Lists fumos
 void fumo_list() {
-  printf("There are %d fumos!\n-----\n", FUMO_COUNT);
+  printf("There are %d fumos!\n-------------------\n", FUMO_COUNT);
   for (int i = 0; i < FUMO_COUNT; i += 1) {
-    puts(FUMO_LIST[i].name);
+    fputs(FUMO_LIST[i]->name[0], stdout);
+    fputs("\n", stdout);
   }
 }
 
 // Fumo!
-void fumo_fumo(fumo_who fm) {
-  fputs(FUMO_LIST[fm].fumo, stdout);
+void fumo_fumo(fumo_who fm, int (*fumo_say)(const char *, FILE *)) {
+  fumo_say(FUMO_LIST[fm]->fumo, stdout);
+}
+
+// panik
+void fumo_panic(char *message, char expr, char *custom_expr) {
+  fputs(message, stdout);
+  fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
+  fumo_expr(helper_fumo, expr, custom_expr);
+  fumo_fumo(helper_fumo, &fputs);
+  exit(EXIT_FAILURE);
 }
 
 /* word processing functions */
@@ -262,16 +261,17 @@ int longestLineWidth(int argc, char **argv) {
 }
 
 // Print some spaces and the right parenthesis
-void paddedBreak(int padding) {
+void paddedBreak(int padding, int (*fumo_say)(const char *, FILE *)) {
   for (int i = 0; i < padding; i += 1) {
-    printf(" ");
+    fumo_say(" ", stdout);
   }
-  printf(")\n");
+  fumo_say(")\n", stdout);
 }
 
 // Shiny "better" word-wrapping
 // Based on the shortest path algo. (xxyxyz.org/line-breaking)
-void wordWrapper(int count, char **words, size_t width, size_t bubble, bool no_wrap, bool cmd) {
+void wordWrapper(int count, char **words, size_t width, size_t bubble,
+                 bool no_wrap, bool cmd, int (*fumo_say)(const char *, FILE *)) {
 
   int *offsets = calloc((count + 1), sizeof(int));
   for (int i = 1; i < count + 1; i += 1) {
@@ -315,21 +315,22 @@ void wordWrapper(int count, char **words, size_t width, size_t bubble, bool no_w
     cur_len = 0;
     start = j;
 
-    printf("( ");
+    fumo_say("( ", stdout);
     // print words
     for (; j < intervals[start] - 1; j++) {
-      printf("%s ", words[j]);
+      fumo_say(words[j], stdout);
+      fumo_say(" ", stdout);
       cur_len += strlen(words[j]) + 1;
       if (!cmd) {
         free(words[j]);
       }
     }
-    printf("%s", words[j]); // last word has no space following it
+    fumo_say(words[j], stdout); // last word has no space following it
     cur_len += strlen(words[j]);
     if (!cmd) { // only clean if the word is not from the command line
       free(words[j]);
     }
-    paddedBreak(bubble - cur_len - 1);
+    paddedBreak(bubble - cur_len - 1, fumo_say);
     j = intervals[start];
   }
 
@@ -346,6 +347,9 @@ int main(int argc, char **argv) {
   bool display_name = false;
   char colour = 0;
   color custom_colour = {0, 0, 0};
+  bool rainbow = false;
+  bool rainbow_fumo = false;
+  bool bold = false;
   char expr = 0;
   char custom_expr[30] = {0};
   fumo_who fm = -1;
@@ -354,13 +358,13 @@ int main(int argc, char **argv) {
 
   // argument
   char opt;
-  while ((opt = getopt(argc, argv, "hvlngc::E:W:f:")) != -1) {
+  while ((opt = getopt(argc, argv, "hvlngrRbc::E:W:f:")) != -1) {
     switch (opt) {
     case 'h':;
       fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
       helpInfo(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
-      fumo_fumo(helper_fumo);
+      fumo_fumo(helper_fumo, fputs);
       return 0;
     case 'l':
       fumo_list();
@@ -407,6 +411,16 @@ int main(int argc, char **argv) {
         }
       }
       break;
+    case 'r':;
+      rainbow = true;
+      break;
+    case 'R':;
+      rainbow = true;
+      rainbow_fumo = true;
+      break;
+    case 'b':;
+      bold = true;
+      break;
     case 'E':;
       int optlen = strlen(optarg);
       if (optlen > 1) {
@@ -431,36 +445,34 @@ int main(int argc, char **argv) {
     MAX_WIDTH = 3;
   }
 
+  if (bold) {
+    fputs("\033[1m", stdout);
+  }
+
   // fumo reads
   int word_count = 0;
   char **word_vector = realloc(NULL, sizeof(char *));
-  if (optind == argc && no_wrap) { // read by line
-    char *buffer = NULL;
-    size_t buf_line, line;
-    while (getline(&buffer, &buf_line, stdin) > -1) {
-      char *token = strdup(buffer);
-      token = replaceTab(token, 8);
-      word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
-      word_vector[word_count++] = token;
-    } // while
-    free(buffer);
-  } else if (optind == argc) { // read one word at a time
+  if (optind == argc) { // read from stdin
     while (1) {
       char *token;
-      token = getInput(stdin, 10);
+      token = getInput(stdin, 64, no_wrap);
       if (!token) {
-        printf("Something has gone terribly wrong!\n");
-        fumo_who helper_fumo = arc4random_uniform(FUMO_COUNT);
-        fumo_expr(helper_fumo, expr, custom_expr);
-        fumo_fumo(helper_fumo);
-        exit(EXIT_FAILURE);
+        fumo_panic("fumo panic! - memory allocation failed: getInput.\n", expr, custom_expr);
       }
-      if (strlen(token) == 0) {
+      if (0 == strlen(token)) {
+        free(token); /* sneaky 1-byte memory leak exterminated */
         break;
+      }
+      if (no_wrap) {
+        token = replaceTab(token, 8);
+        if (!token) {
+          fumo_panic("fumo panic! - memory allocation failed: replaceTab.\n", expr, custom_expr);
+        }
       }
       word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
       word_vector[word_count++] = token;
     }
+
   } else { // read from cmd line arguments
     word_count = argc - optind;
 
@@ -483,7 +495,7 @@ int main(int argc, char **argv) {
     for (int i = 0; !no_wrap && i < word_count; i++) {
       if (strlen(word_vector[i]) > MAX_WIDTH - 1) {
         // move things around
-        word_vector = realloc(word_vector, (++word_count) * sizeof(char *));
+        word_vector = realloc(word_vector, (word_count += 1) * sizeof(char *));
         memmove(&word_vector[i + 2],
                 &word_vector[i + 1],
                 (word_count - i - 2) * sizeof(char *));
@@ -507,24 +519,35 @@ int main(int argc, char **argv) {
   // finalize expression
   fumo_expr(fm, expr, custom_expr);
 
-  // color
+  // colours
+  if (strcmp(FUMO_LIST[fm]->name[0], "Chimata") == 0) {
+    rainbow = true;
+  }
+
+  int (*fumo_say)(const char *, FILE *);
+  if (rainbow) {
+    fumo_say = &lolfumo;
+  } else {
+    fumo_say = &fputs;
+  }
+
   if (colour == 1) {
-    SET_COLOR(FUMO_LIST[fm].color.R, FUMO_LIST[fm].color.G, FUMO_LIST[fm].color.B);
+    SET_COLOR(FUMO_LIST[fm]->color.R, FUMO_LIST[fm]->color.G, FUMO_LIST[fm]->color.B);
   } else if (colour == 2) {
     SET_COLOR(custom_colour.R, custom_colour.G, custom_colour.B);
   }
 
   // CYOA mode
   if (display_name) {
-    printf("%s says:\n", FUMO_LIST[fm].name);
+    printf("%s says:\n", FUMO_LIST[fm]->name[0]);
   }
 
   // top line
-  fputc(' ', stdout);
+  fumo_say(" ", stdout);
   for (int i = 0; i < bubble_width; i++) {
-    fputc('_', stdout);
+    fumo_say("_", stdout);
   }
-  fputc('\n', stdout);
+  fumo_say("\n", stdout);
 
   // message
   int last_section = 0, cur_section = 0;
@@ -542,25 +565,37 @@ int main(int argc, char **argv) {
                    bubble_width - 2,
                    bubble_width,
                    no_wrap,
-                   optind != argc);
+                   optind != argc,
+                   fumo_say);
       last_section = cur_section;
       cur_section = 0;
     }
   }
 
   // bottom line
-  fputc(' ', stdout);
+  fumo_say(" ", stdout);
   for (int i = 0; i < bubble_width; i++) {
-    fputc('-', stdout);
+    fumo_say("-", stdout);
   }
 
   // reset color
-  if (colour) {
+  if (colour || (rainbow && !rainbow_fumo)) {
     RESET_COLOR;
+    if (bold) {
+      fputs("\033[1m", stdout);
+    }
   }
 
   // fumo!
-  fumo_fumo(fm);
+  if (rainbow_fumo) {
+    fumo_fumo(fm, &lolfumo);
+  } else {
+    fumo_fumo(fm, &fputs);
+  }
+
+  if (rainbow_fumo || bold) {
+    RESET_COLOR;
+  }
 
   free(word_vector);
   return 0;

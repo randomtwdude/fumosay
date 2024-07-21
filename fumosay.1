@@ -1,10 +1,10 @@
-.TH fumosay 1 "2024 Jul 13" "version 1.1.9"
+.TH fumosay 1 "2024 Jul 21" "version 1.1.10"
 .SH NAME
 fumosay - funky talking fumofumos
 
 .SH SYNOPSIS
 fumosay
-.BI "[-hlng] [-c" "color" "] [-W " "column" "] [-f " "name(s)" "] [-E " "expression" "]"
+.BI "[-hvlngbrR] [-c" "color" "] [-W " "column" "] [-f " "name(s)" "] [-E " "expression" "]"
 
 .SH EXAMPLES
 .IP "fumosay Hello world!"
@@ -25,6 +25,12 @@ Disable word-wrapping, preserving white-spaces and line breaks. Allowing the fum
 .TP
 .B -g
 Display a simple prompt at the top of the message, like a video game dialogue.
+.TP
+.B -b
+Makes the output bold font.
+.TP
+.B -r/-R
+Makes the text rainbow. -R makes the fumo rainbow as well.
 .TP
 .BI "-c" "R,G,B"
 Color the text with a color that vaguely represents the fumo. Optionally, specify an RGB color of your own, there are no spaces after the character c.

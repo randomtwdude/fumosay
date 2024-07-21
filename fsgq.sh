@@ -117,7 +117,7 @@ if [[ "$1" =~ debug ]]; then
 fi
 
 # list of available fumos
-fumolist=$(fumosay -l | tail -n +3)
+fumolist=$(./fumosay -l | tail -n +3)
 if [[ ! $fumolist ]]; then
 	printf -- "Fumosay is slient. Oh no!\n"
 	exit 1
@@ -165,6 +165,7 @@ done
 
 # capture character name
 # We have to do this because fumosay only accepts the entire name
+# (no longer true but whatever)
 sayer=$(echo "$gq" | grep -o -P "(?<=^\-- )([\w\s](?! to))+\w")
 
 # captures anything between the quotes
@@ -179,7 +180,7 @@ fi
 if [[ $fumo_specified ]]; then
 	shift 1
 fi
-echo "$saying" | fumosay -f "$sayer" $@
+echo "$saying" | ./fumosay -f "$sayer" $@
 
 if [[ $debug_mode ]]; then
 	printf -- "[DEBUG] Original gensoquote:\n%s" "$gq"

@@ -9,28 +9,18 @@ Written in the spirit of funkyness.
 
 ## Features
 - ᗜˬᗜ<br>
-  52 adorable fumos come to your machine!
+  Adorable fumos on your terminal!
 - Expressions<br>
   Have you seen a Patchouli fumo going :3 ?
 - Fast & efficient<br>
-  Glorious C speeds.
+  Gloriously unsafe C incantations.
 - Fancy algorithms<br>
   Uses a minimum raggedness algorithm like TeX. (no other fancies of TeX though)
-- Portable<br>
-  Runs on almost all your systems thanks to [Cosmopolitan libc](https://github.com/jart/cosmopolitan).
+- Colors & Rainbows<br>
+  No unicorns.
 
 ## Fumos
-The fumos are designed with the font Cascadia Code.
-
-<details>
-  <summary>List of all available fumos!</summary>
-  Every character with a Gift fumo (and Inu Sakuya!), except (for now):
-
-  - Parsee
-  - Orin
-  - Nue
-  - Chimata
-</details>
+We have every single Touhou character with a Gift fumo! They look best with the font Cascadia Code.
 
 ## Updates
 More or less weekly update. See [changelog](changelog.md).
@@ -42,11 +32,11 @@ For other Linux users:
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
 3. `cd fumosay-{version}`
 ```
-gcc -o fumosay fumosay.c
+gcc -o fumosay fumosay.c -lm
 # move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
-For other platforms, Actually Portable Executable (updated to `v1.1.9`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.9).
+For other platforms, Actually Portable Executable (updated to `v1.1.10`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.1.10).
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`

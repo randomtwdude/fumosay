@@ -1,3 +1,19 @@
+### v1.1.10 - 2024/07/21
+Finally, fumo completeness.
+- Added 4 new fumos:<br>
+  Orin, Parsee, Nue, and Chimata!
+- The lunar rainbow is now available with `-r`:<br>
+  - Always active for Chimata
+  - `-R` to also make the fumo rainbow
+  - Now requires the math library when compiling
+- Bold font is now available with `-b`
+- The `-f` option is now a real fuzzy search. (Bitap wow!)
+  - fumo data now supports multiple names
+- Various fumo touch-ups:<br>
+  all fumo now have odd number gap in the center (Reimu, Flan, and Tewi were the exceptions)
+  Sanae and others gets more hair
+- Number of memory leaks reduced by 1 (one), not that it matters anyways.
+
 ### v1.1.9 - 2024/07/13
 - Added 4 new fumos:<br>
   Seija, Sagume, Nazrin, and Okina!
