@@ -5,16 +5,21 @@
 
 // Format:
 // ---------------------
-// char fumoName[] = *ascii art*;
-// fumo_data name = { fumoName, {R, G, B}, {"name", "more names", ..., ""} };
+// static char fumoName[] = *ascii art*;
+// static fumo_data name = { fumoName, {R, G, B}, {"name", "more names", ..., ""} };
 // ---------------------
 // The last entry _MUST_ be "" or the fumo explodes.
 // Avoid last names for sisters (the search gets confused).
 
 // don't forget to add to FUMO_LIST (at the bottom)
 
+// Include Guard
+#ifndef FUMO_FUMO
+#define FUMO_FUMO
+
+/* ᗜ_ᗜ FUMOS ᗜˬᗜ */
 // Hakurei Reimu
-char fumoReimu[] = R"fumo(
+static char fumoReimu[] = R"fumo(
         \
          \                                                ___----__
           \         *@@@@%+--__                      ,*@@*         @@
@@ -48,14 +53,14 @@ char fumoReimu[] = R"fumo(
                                           @      @
                                          #@@-__-@@#
 )fumo";
-fumo_data reimu = {
+static fumo_data reimu = {
   fumoReimu,
   {245, 110, 120},
   {"Reimu", "Hakurei", "broke", ""}
 };
 
 // Patchouli Knowledge
-char fumoPatchouli[] = R"fumo(
+static char fumoPatchouli[] = R"fumo(
         \
          \                               +--*##=_
           \                    ___         *+    #@
@@ -89,14 +94,14 @@ char fumoPatchouli[] = R"fumo(
                      @  @             @-_-@            @ ,@
                       ^#                                #
 )fumo";
-fumo_data patchouli = {
+static fumo_data patchouli = {
   fumoPatchouli,
   {175, 115, 240},
   {"Patchouli", "Knowledge", "Patchy", "Mukyu", ""}
 };
 
 // Kirisame Marisa
-char fumoMarisa[] = R"fumo(
+static char fumoMarisa[] = R"fumo(
              \
               \                        _-%%==-_
                \                    %@*        #@@=
@@ -133,14 +138,14 @@ char fumoMarisa[] = R"fumo(
                                                       % @ ^#
                                                        ^*
 )fumo";
-fumo_data marisa = {
+static fumo_data marisa = {
 	fumoMarisa,
 	{245, 210, 120},
 	{"Marisa", "Kirisame", ""}
 };
 
 // Flandre Scarlet
-char fumoFlandre[] = R"fumo(
+static char fumoFlandre[] = R"fumo(
             \
              \
               \       ,-===@@@*****====--__
@@ -176,14 +181,14 @@ char fumoFlandre[] = R"fumo(
        %@      .@  _@             @       @           @  .@     %   @
                  %*                *--==-*             *@*       *@*
 )fumo";
-fumo_data flandre = {
+static fumo_data flandre = {
 	fumoFlandre,
 	{245, 120, 145},
 	{"Flandre", "Flan", "Gooboo", ""}
 };
 
 // Yorigami Joon
-char fumoJoon[] = R"fumo(
+static char fumoJoon[] = R"fumo(
               \
                \
                 \
@@ -220,14 +225,14 @@ char fumoJoon[] = R"fumo(
                                     ^#   #^
                                      ^*@*^
 )fumo";
-fumo_data joon = {
+static fumo_data joon = {
 	fumoJoon,
 	{240, 120, 240},
 	{"Joon", ""}
 };
 
 // Komeiji Koishi
-char fumoKoishi[] = R"fumo(
+static char fumoKoishi[] = R"fumo(
              \
               \
                \            ,__-#@@##------%##@@-,_
@@ -262,14 +267,14 @@ char fumoKoishi[] = R"fumo(
                         -@,__       __==----   @       .@#   @.
                              ^####+^            #=____-#  @#*
 )fumo";
-fumo_data koishi = {
+static fumo_data koishi = {
 	fumoKoishi,
 	{200, 245, 125},
 	{"Koishi", "Koosh", ""}
 };
 
 // Houraisan Kaguya
-char fumoKaguya[] = R"fumo(
+static char fumoKaguya[] = R"fumo(
                \
                 \
                  \           ,___------%%%-----___,
@@ -305,14 +310,14 @@ char fumoKaguya[] = R"fumo(
                           ^-__,                 ,__@@*
                               *@@@---_____---@@@*
 )fumo";
-fumo_data kaguya = {
+static fumo_data kaguya = {
 	fumoKaguya,
 	{240, 150, 130},
 	{"Kaguya", "Houraisan", ""}
 };
 
 // Fujiwara no Mokou
-char fumoMokou[] = R"fumo(
+static char fumoMokou[] = R"fumo(
           \
            \
             \
@@ -349,14 +354,14 @@ char fumoMokou[] = R"fumo(
                              ^*-@__    *@*    __#--*      @*
                                    *--=====--*
 )fumo";
-fumo_data mokou = {
+static fumo_data mokou = {
 	fumoMokou,
 	{245, 100, 100},
 	{"Mokou", "Fujiwara", ""}
 };
 
 // Saigyouji Yuyuko
-char fumoYuyuko[] = R"fumo(
+static char fumoYuyuko[] = R"fumo(
                   \
                    \
                     \                 @#
@@ -393,14 +398,14 @@ char fumoYuyuko[] = R"fumo(
                                   .#^  @    @___#
                                   *---^
 )fumo";
-fumo_data yuyuko = {
+static fumo_data yuyuko = {
 	fumoYuyuko,
 	{250, 160, 210},
 	{"Yuyuko", "Saigyouji", ""}
 };
 
 // Konpaku Youmu
-char fumoYoumu[] = R"fumo(
+static char fumoYoumu[] = R"fumo(
                 \
                  \
                   \                 __---#***#---_,
@@ -434,14 +439,14 @@ char fumoYoumu[] = R"fumo(
                                       @   @   @   @_,
                                      *--#*     #___-
 )fumo";
-fumo_data youmu = {
+static fumo_data youmu = {
 	fumoYoumu,
 	{150, 250, 190},
 	{"Youmu", "Konpaku", "Myon", ""}
 };
 
 // Remilia Scarlet
-char fumoRemilia[] = R"fumo(
+static char fumoRemilia[] = R"fumo(
               \
                \
                 \            ,__=##@@@-----____##@@-_
@@ -475,14 +480,14 @@ char fumoRemilia[] = R"fumo(
                 #        ,@*-__-@    *-#  :  #-*    @-___=@*,      ,@%
                  *=-____=%              *_@_*               *@___=*
 )fumo";
-fumo_data remilia = {
+static fumo_data remilia = {
 	fumoRemilia,
 	{245,  80, 130},
 	{"Remilia", "Remi", "Boogoo", ""}
 };
 
 // Kochiya Sanae
-char fumoSanae[] = R"fumo(
+static char fumoSanae[] = R"fumo(
              \
               \
                \                 ,___-----___,       mm,
@@ -516,14 +521,14 @@ char fumoSanae[] = R"fumo(
                                                        @   ,@^
                                                       #__--*
 )fumo";
-fumo_data sanae = {
+static fumo_data sanae = {
 	fumoSanae,
 	{160, 235, 140},
 	{"Sanae", "Kochiya", "snae", ""}
 };
 
 // Inaba Tewi
-char fumoTewi[] = R"fumo(
+static char fumoTewi[] = R"fumo(
             \
              \
               \
@@ -560,14 +565,14 @@ char fumoTewi[] = R"fumo(
                                       ^#  #^
                                         @@
 )fumo";
-fumo_data tewi = {
+static fumo_data tewi = {
 	fumoTewi,
 	{240, 180,  90},
 	{"Tewi", "Tei", ""}
 };
 
 // Yakumo Yukari
-char fumoYukari[] = R"fumo(
+static char fumoYukari[] = R"fumo(
               \
                \
                 \       ,==#@@#m                  ,##@@=-,
@@ -602,14 +607,14 @@ char fumoYukari[] = R"fumo(
                                  *@,       ,@*
                                     *#,_,#*
 )fumo";
-fumo_data yukari = {
+static fumo_data yukari = {
 	fumoYukari,
 	{180, 120, 240},
 	{"Yukari", "gap", ""}
 };
 
 // Komeiji Satori
-char fumoSatori[] = R"fumo(
+static char fumoSatori[] = R"fumo(
                 \
                  \
                   \
@@ -644,14 +649,14 @@ char fumoSatori[] = R"fumo(
                                   *m,_,m* ** @,     @  *@@##==*
                                      *         ----^
 )fumo";
-fumo_data satori = {
+static fumo_data satori = {
 	fumoSatori,
 	{245, 125, 240},
 	{"Satori", ""}
 };
 
 // Alice Margatroid
-char fumoAlice[] = R"fumo(
+static char fumoAlice[] = R"fumo(
                 \
                  \
                   \           ,_**_, ,_**_, ,_*_,
@@ -688,14 +693,14 @@ char fumoAlice[] = R"fumo(
                                      #        @
                                       *#___--*
 )fumo";
-fumo_data alice = {
+static fumo_data alice = {
 	fumoAlice,
 	{245, 200, 100},
 	{"Alice", "Margatroid", ""}
 };
 
 // Hinanawi Tenshi
-char fumoTenshi[] = R"fumo(
+static char fumoTenshi[] = R"fumo(
                  \
                   \
                    \
@@ -732,14 +737,14 @@ char fumoTenshi[] = R"fumo(
                                 #,   @   @   ,#
                                   *==#    @#*
 )fumo";
-fumo_data tenshi = {
+static fumo_data tenshi = {
 	fumoTenshi,
 	{130, 110, 240},
 	{"Tenshi", "Hinanawi", "Hinanai", "Tenko", ""}
 };
 
 // the STRONGEST Cirno!
-char fumoCirno[] = R"fumo(
+static char fumoCirno[] = R"fumo(
                \
                 \
                  \
@@ -777,14 +782,14 @@ char fumoCirno[] = R"fumo(
                                 @    %     %    %
                                  *==*       @==#*
 )fumo";
-fumo_data cirno = {
+static fumo_data cirno = {
 	fumoCirno,
 	{130, 165, 245},
 	{"Cirno", "baka", "9", ""}
 };
 
 // Shameimaru Aya
-char fumoAya[] = R"fumo(
+static char fumoAya[] = R"fumo(
               \
                \                       _
                 \                   ,+@ @+,
@@ -820,14 +825,14 @@ char fumoAya[] = R"fumo(
                                 @.   #    @    ,%
                                 *+==@*    *#@-=
 )fumo";
-fumo_data aya = {
+static fumo_data aya = {
 	fumoAya,
 	{245, 110, 100},
 	{"Aya", "Shameimaru", ""}
 };
 
 // Izayoi Sakuya
-char fumoSakuya[] = R"fumo(
+static char fumoSakuya[] = R"fumo(
                \
                 \
                  \
@@ -864,14 +869,14 @@ char fumoSakuya[] = R"fumo(
                   #            #___=#    @    %         # @   @
                                           *-==#            @_%
 )fumo";
-fumo_data sakuya = {
+static fumo_data sakuya = {
 	fumoSakuya,
 	{180, 160, 250},
 	{"Sakuya", "Izayoi", ""}
 };
 
 // puppo!
-char fumoInu_saku[] = R"fumo(
+static char fumoInu_saku[] = R"fumo(
                 \
                  \             ,__,
                   \        ,m*   ,_=%
@@ -907,14 +912,14 @@ char fumoInu_saku[] = R"fumo(
                        |                                   |
                  ======#===================================#=====
 )fumo";
-fumo_data inu_saku = {
+static fumo_data inu_saku = {
 	fumoInu_saku,
 	{180, 160, 250},
 	{"puppo", "Inu Sakuya", ""}
 };
 
 // Moriya Suwako
-char fumoSuwako[] = R"fumo(
+static char fumoSuwako[] = R"fumo(
             \
              \
               \
@@ -950,14 +955,14 @@ char fumoSuwako[] = R"fumo(
              #    *#,       @   @   *#@#*   @     @       ,@#*      #
              @      *---____+@   *,_______,*     @#____---*         @
 )fumo";
-fumo_data suwako = {
+static fumo_data suwako = {
 	fumoSuwako,
 	{100, 230, 250},
 	{"Suwako", "Moriya", "frog", ""}
 };
 
 // Hong Meiling
-char fumoMeiling[] = R"fumo(
+static char fumoMeiling[] = R"fumo(
              \
               \
                \
@@ -994,14 +999,14 @@ char fumoMeiling[] = R"fumo(
                     #  #  %      #  #   #   @        %_,*
                        @+*     #+=+*     *__+#
 )fumo";
-fumo_data meiling = {
+static fumo_data meiling = {
 	fumoMeiling,
 	{240, 100, 120},
 	{"Meiling", "Hong", ""}
 };
 
 // Ibuki Suika
-char fumoSuika[] = R"fumo(
+static char fumoSuika[] = R"fumo(
           \
            \
             \                                         __--==+#@@#,
@@ -1039,14 +1044,14 @@ char fumoSuika[] = R"fumo(
                     *,__,%                               *%   ,%
                                                            @+*
 )fumo";
-fumo_data suika = {
+static fumo_data suika = {
 	fumoSuika,
 	{250, 200,  80},
 	{"Suika", "Ibuki", "goblin", "watermelon", ""}
 };
 
 // Yorigami Shion
-char fumoShion[] = R"fumo(
+static char fumoShion[] = R"fumo(
            \
             \
              \     _==@@@@@##=-_             _-=##@@@@@==_
@@ -1082,14 +1087,14 @@ char fumoShion[] = R"fumo(
                              %   %           %   %
                              ^*=*^           ^*=*^
 )fumo";
-fumo_data shion = {
+static fumo_data shion = {
 	fumoShion,
 	{120, 130, 220},
 	{"Shion", ""}
 };
 
 // Chen
-char fumoChen[] = R"fumo(
+static char fumoChen[] = R"fumo(
             \
              \
               \
@@ -1125,14 +1130,14 @@ char fumoChen[] = R"fumo(
                                  @_-, %    *@ ,-_#
                                      #       @*
 )fumo";
-fumo_data chen = {
+static fumo_data chen = {
 	fumoChen,
 	{240, 180,  90},
 	{"Chen", ""}
 };
 
 // Ran Yakumo
-char fumoRan[] = R"fumo(
+static char fumoRan[] = R"fumo(
             \
              \
               \        ,@*@@,                    ,@%@.
@@ -1171,14 +1176,14 @@ char fumoRan[] = R"fumo(
        *-,          ,__     @     *+^ *__* ^-*     @      __,          ,=@*
           *=-@@#=--*       @                        @        *--=#@@-=*
 )fumo";
-fumo_data ran = {
+static fumo_data ran = {
 	fumoRan,
 	{90, 120, 240},
 	{"Ran", ""}
 };
 
 // Rumia
-char fumoRumia[] = R"fumo(
+static char fumoRumia[] = R"fumo(
                \
                 \
                  \                                             ,_
@@ -1211,14 +1216,14 @@ char fumoRumia[] = R"fumo(
                                  @       @
                                   #=====#
 )fumo";
-fumo_data rumia = {
+static fumo_data rumia = {
 	fumoRumia,
 	{250,  50,  50},
 	{"Rumia", ""}
 };
 
 // Reisen Udongein Inaba
-char fumoReisen_inaba[] = R"fumo(
+static char fumoReisen_inaba[] = R"fumo(
           \
            \
             \
@@ -1255,14 +1260,14 @@ char fumoReisen_inaba[] = R"fumo(
                                     *@ # @*
                                       *@*
 )fumo";
-fumo_data reisen_inaba = {
+static fumo_data reisen_inaba = {
 	fumoReisen_inaba,
 	{200, 155, 240},
 	{"Reisen", "Udongein", ""}
 };
 
 // Yagokoro Eirin
-char fumoEirin[] = R"fumo(
+static char fumoEirin[] = R"fumo(
              \
               \                     ,_+@+_,
                \               ,=@#*       *#@=,
@@ -1299,14 +1304,14 @@ char fumoEirin[] = R"fumo(
                   %    %         ,-,__   __,-,
                   @__-^          O_O  ---  O_O
 )fumo";
-fumo_data eirin = {
+static fumo_data eirin = {
 	fumoEirin,
 	{100, 110, 250},
 	{"Eirin", "Yagokoro", "Erin", ""}
 };
 
 // Kazami Yuuka
-char fumoYuuka[] = R"fumo(
+static char fumoYuuka[] = R"fumo(
             \
              \
               \
@@ -1341,14 +1346,14 @@ char fumoYuuka[] = R"fumo(
                                 @       ,%
                                 *=@___+@*
 )fumo";
-fumo_data yuuka = {
+static fumo_data yuuka = {
 	fumoYuuka,
 	{190, 225, 125},
 	{"Yuuka", "Kazami", ""}
 };
 
 // Hata no Kokoro
-char fumoKokoro[] = R"fumo(
+static char fumoKokoro[] = R"fumo(
               \
                \      ,@#
                 \    @  @
@@ -1383,14 +1388,14 @@ char fumoKokoro[] = R"fumo(
                                 #,   #     #   ,#
                                   *=@       @=*
 )fumo";
-fumo_data kokoro = {
+static fumo_data kokoro = {
 	fumoKokoro,
 	{190, 110, 165},
 	{"Kokoro", "Hata", ""}
 };
 
 // Inubashiri Momiji
-char fumoMomiji[] = R"fumo(
+static char fumoMomiji[] = R"fumo(
          \
           \
            \
@@ -1428,14 +1433,14 @@ char fumoMomiji[] = R"fumo(
                                     @,   ,@
                                       *m*
 )fumo";
-fumo_data momiji = {
+static fumo_data momiji = {
 	fumoMomiji,
 	{250, 135, 135},
 	{"Momiji", "Inubashiri", ""}
 };
 
 // Himekaidou Hatate
-char fumoHatate[] = R"fumo(
+static char fumoHatate[] = R"fumo(
              \
               \
                \                    ,-*^*-,
@@ -1471,14 +1476,14 @@ char fumoHatate[] = R"fumo(
                                       # #
                                        #
 )fumo";
-fumo_data hatate = {
+static fumo_data hatate = {
 	fumoHatate,
 	{200, 120, 240},
 	{"Hatate", "Himekaidou", ""}
 };
 
 // Kawashiro Nitori
-char fumoNitori[] = R"fumo(
+static char fumoNitori[] = R"fumo(
             \
              \
               \                 ,__--**@@@**--__,
@@ -1515,14 +1520,14 @@ char fumoNitori[] = R"fumo(
                                          #  -#
                                           #+*^
 )fumo";
-fumo_data nitori = {
+static fumo_data nitori = {
 	fumoNitori,
 	{135, 190, 230},
 	{"Nitori", "Kawashiro", ""}
 };
 
 // Ibaraki Kasen
-char fumoKasen[] = R"fumo(
+static char fumoKasen[] = R"fumo(
         \
          \
           \                                             ,___
@@ -1559,14 +1564,14 @@ char fumoKasen[] = R"fumo(
                                   *--__ _%--*
                                        ^
 )fumo";
-fumo_data kasen = {
+static fumo_data kasen = {
 	fumoKasen,
 	{235, 110, 200},
 	{"Kasen", "Ibaraki", ""}
 };
 
 // Toyosatomimi no Miko
-char fumoMiko[] = R"fumo(
+static char fumoMiko[] = R"fumo(
         \
          \
           \
@@ -1604,14 +1609,14 @@ char fumoMiko[] = R"fumo(
                               #*   ,@     @,  @,
                                ^-__#       *___+#
 )fumo";
-fumo_data miko = {
+static fumo_data miko = {
 	fumoMiko,
 	{245, 225,  95},
 	{"Miko", "Toyosatomimi", ""}
 };
 
 // Mononobe no Futo (no VSCode she's not a function)
-char fumoFuto[] = R"fumo(
+static char fumoFuto[] = R"fumo(
              \
               \
                \                   ,m%***%m,
@@ -1646,14 +1651,14 @@ char fumoFuto[] = R"fumo(
                         ^+___#  -_ ^**@@@**^ _- #___+^    #^
                                   ^--_____--^
 )fumo";
-fumo_data futo = {
+static fumo_data futo = {
 	fumoFuto,
 	{190, 160, 245},
 	{"Futo", "Mononobe", ""}
 };
 
 // Usami Renko
-char fumoRenko[] = R"fumo(
+static char fumoRenko[] = R"fumo(
              \
               \
                \                                      #,
@@ -1691,14 +1696,14 @@ char fumoRenko[] = R"fumo(
                          @,          # #          ,%
                            ^*+=_____+# #+_____=+*^
 )fumo";
-fumo_data renko = {
+static fumo_data renko = {
 	fumoRenko,
 	{220, 155, 135},
 	{"Renko", "Usami", ""}
 };
 
 // Maribel Hearn
-char fumoMaribel[] = R"fumo(
+static char fumoMaribel[] = R"fumo(
              \
               \
                \             ,__-----%@@@%-----_,
@@ -1735,14 +1740,14 @@ char fumoMaribel[] = R"fumo(
                                      %   %
                                       *=*
 )fumo";
-fumo_data maribel = {
+static fumo_data maribel = {
 	fumoMaribel,
 	{230, 160, 240},
 	{"Maribel", "Hearn", "Merry", ""}
 };
 
 // Junko
-char fumoJunko[] = R"fumo(
+static char fumoJunko[] = R"fumo(
              \
               \
                \              ,___---%%@%%---__,
@@ -1780,14 +1785,14 @@ char fumoJunko[] = R"fumo(
                                    ++      @
                                   ,#        ^
 )fumo";
-fumo_data junko = {
+static fumo_data junko = {
 	fumoJunko,
 	{240, 145,  85},
 	{"Junko", ""}
 };
 
 // Shiki Eiki
-char fumoEiki[] = R"fumo(
+static char fumoEiki[] = R"fumo(
          \
           \                             |
            \                          ,+#+,
@@ -1823,14 +1828,14 @@ char fumoEiki[] = R"fumo(
                      +,  @        ^-   ^-^   -^
                        *+#
 )fumo";
-fumo_data eiki = {
+static fumo_data eiki = {
 	fumoEiki,
 	{160, 230, 150},
 	{"Eiki", "Shiki", "Yamaxanadu", ""}
 };
 
 // Haniyasushin Keiki
-char fumoKeiki[] = R"fumo(
+static char fumoKeiki[] = R"fumo(
           \
            \
             \               ___----+=====+----___
@@ -1866,14 +1871,14 @@ char fumoKeiki[] = R"fumo(
                 ^#               *+  *  *+  *                 #*
                                   #-^    #-^
 )fumo";
-fumo_data keiki = {
+static fumo_data keiki = {
 	fumoKeiki,
 	{160, 160, 235},
 	{"Keiki", "Haniyasushin", ""}
 };
 
 // Kagiyama Hina
-char fumoHina[] = R"fumo(
+static char fumoHina[] = R"fumo(
            \
             \                         ___
              \                  ,-`-,*___*,-`-,
@@ -1912,14 +1917,14 @@ char fumoHina[] = R"fumo(
                     *---+*          @  @  #          *_____--*
                                      ^#
 )fumo";
-fumo_data hina = {
+static fumo_data hina = {
 	fumoHina,
 	{250, 130, 130},
 	{"Hina", "Kagiyama", ""}
 };
 
 // Tatara Kogasa
-char fumoKogasa[] = R"fumo(
+static char fumoKogasa[] = R"fumo(
           \
            \
             \   ,*+
@@ -1956,14 +1961,14 @@ char fumoKogasa[] = R"fumo(
                                          @+^  @
                                           *,+^
 )fumo";
-fumo_data kogasa = {
+static fumo_data kogasa = {
 	fumoKogasa,
 	{120, 200, 235},
 	{"Kogasa", "Tatara", ""}
 };
 
 // Reiuji Utsuho (Okuu)
-char fumoUtsuho[] = R"fumo(
+static char fumoUtsuho[] = R"fumo(
           \
            \
             \
@@ -1999,14 +2004,14 @@ char fumoUtsuho[] = R"fumo(
                                    @, @ ,@
                                      *m*
 )fumo";
-fumo_data utsuho = {
+static fumo_data utsuho = {
 	fumoUtsuho,
 	{135, 200, 140},
 	{"Utsuho", "Reiuji", "Okuu", ""}
 };
 
 // Morichika Rinnosuke
-char fumoRinnosuke[] = R"fumo(
+static char fumoRinnosuke[] = R"fumo(
              \
               \                       _---,
                \                    m%  ,+
@@ -2041,14 +2046,14 @@ char fumoRinnosuke[] = R"fumo(
                                  ----@   @----
                              ----=====*%*=====----
 )fumo";
-fumo_data rinnosuke = {
+static fumo_data rinnosuke = {
 	fumoRinnosuke,
 	{135, 165, 200},
 	{"Rinnosuke", "Morichika", ""}
 };
 
 // Hecatia Lapislazuli
-char fumoHecatia[] = R"fumo(
+static char fumoHecatia[] = R"fumo(
             \
              \
               \                 ____------____
@@ -2084,14 +2089,14 @@ char fumoHecatia[] = R"fumo(
                      *-* %  ,=@  %           ```
                           ``   ``
 )fumo";
-fumo_data hecatia = {
+static fumo_data hecatia = {
 	fumoHecatia,
 	{200, 105, 125},
 	{"Hecatia", "Lapislazuli", "hecc", ""}
 };
 
 // Kijin Seija
-char fumoSeija[] = R"fumo(
+static char fumoSeija[] = R"fumo(
              \
               \
                \
@@ -2124,14 +2129,14 @@ char fumoSeija[] = R"fumo(
                   ^--*^ @,      @    *m*    @       ,%
                           *___*  %@%^   ^%@%   *___*
 )fumo";
-fumo_data seija = {
+static fumo_data seija = {
 	fumoSeija,
 	{245, 115, 100},
 	{"Seija", "Kijin", ""}
 };
 
 // Kishin Sagume
-char fumoSagume[] = R"fumo(
+static char fumoSagume[] = R"fumo(
                 \
                  \
                   \
@@ -2167,14 +2172,14 @@ char fumoSagume[] = R"fumo(
                      *--- @       @ %
                                    @
 )fumo";
-fumo_data sagume = {
+static fumo_data sagume = {
 	fumoSagume,
 	{180, 110, 200},
 	{"Sagume", "Kishin", ""}
 };
 
 // Nazrin
-char fumoNazrin[] = R"fumo(
+static char fumoNazrin[] = R"fumo(
           \
            \
             \    ,-m%@@%m-,                           ,m%@@@%m,
@@ -2211,14 +2216,14 @@ char fumoNazrin[] = R"fumo(
                            %_        @ # # @       ,%
                              *@_    % @   @ %    _@
 )fumo";
-fumo_data nazrin = {
+static fumo_data nazrin = {
 	fumoNazrin,
 	{220, 240, 245},
 	{"Nazrin", ""}
 };
 
 // Matara Okina
-char fumoOkina[] = R"fumo(
+static char fumoOkina[] = R"fumo(
               \
                \                     ,=+@@+=,
                 \                 ,=@*      *@=,
@@ -2257,14 +2262,14 @@ char fumoOkina[] = R"fumo(
                 #           #      %,       ,%       #           #
                 #           #        *+___+*         #           #
 )fumo";
-fumo_data okina = {
+static fumo_data okina = {
 	fumoOkina,
 	{235, 160,  85},
 	{"Okina", "Matara", ""}
 };
 
 // Kaenbyou Rin (Orin)
-char fumoOrin[] = R"fumo(
+static char fumoOrin[] = R"fumo(
           \
            \
             \     +m@@%+--_,                         ,_--+%@m+
@@ -2299,14 +2304,14 @@ char fumoOrin[] = R"fumo(
              @     %                                       `*--___#
             +m___--
 )fumo";
-fumo_data orin = {
+static fumo_data orin = {
   fumoOrin,
   {235, 110, 120},
   {"Rin", "Kaenbyou", "Orin", ""}
 };
 
 // Mizuhashi Parsee
-char fumoParsee[] = R"fumo(
+static char fumoParsee[] = R"fumo(
               \
                \
                 \                 ,__________,
@@ -2341,14 +2346,14 @@ char fumoParsee[] = R"fumo(
                                         --#    @   ,#
                                            *-__#__*
 )fumo";
-fumo_data parsee = {
+static fumo_data parsee = {
   fumoParsee,
   {180, 220, 130},
   {"Parsee", "Mizuhashi", ""},
 };
 
 // Houjuu Nue
-char fumoNue[] = R"fumo(
+static char fumoNue[] = R"fumo(
               \
                \
                 \
@@ -2383,14 +2388,14 @@ char fumoNue[] = R"fumo(
                 ; ,@           *,    %   %    ,%        *__    %
                ,#*               *+_@     @_+*             ---#
 )fumo";
-fumo_data nue = {
+static fumo_data nue = {
   fumoNue,
   {120, 120, 245},
   {"Nue", "Houjuu", ""},
 };
 
 // Tenkyuu Chimata
-char fumoChimata[] = R"fumo(
+static char fumoChimata[] = R"fumo(
              \
               \                   ___-----___
                \             __--*           *--__
@@ -2425,19 +2430,196 @@ char fumoChimata[] = R"fumo(
                                +@_  ,*   *,  ,m@
                                   *#       #*
 )fumo";
-fumo_data chimata = {
+static fumo_data chimata = {
   fumoChimata,
   {135, 150, 230},
   {"Chimata", "Tenkyuu", ""},
 };
 
+// Mystia Lorelei
+static char fumoMystia[] = R"fumo(
+               \
+                \
+                 \      ,#+                        ^#*,
+                  \    @   %,                     ,%   %
+                       @    *m,_-**,_-****-_,--_.*    .@
+                        %_,       ,*        *,      .+%
+                       @          %          %        ,+
+                        ^*%@*     @,        ,@    *@%*
+                           *_-@,_---*%@@@@%*---__m-_*
+                            _+*                   *@_
+                          ,%                         %,
+                        ,@                             +,
+                       @                                 %
+                      %.                                  @,
+                     @. ,___----*%@@%*-__            __--__%.
+                    %+-*                 *-____--*@@*      :@.
+                  m@*-__    __---%***%*+=--__          ,_-%#@+@m,
+                 @   %  *=-^     _+%         @*--____-*     %   *#
+                %    #    @___--*   @.     ,% ,   @   @,    -=    @
+                @    @    *:         @,    @   *-__#   %     #    @
+                 *,  @    %_-m+%@@@%+=-%   %+%@@@%+m-_ @     %  ,*
+                   ^+%    @  @  @    @  ^+#@  #    @   %    =+^^
+            +--%@+-@  @   %  @*^     @     %*^     @   @    @+--*=--+
+             *-,   @   *_ @   %     ,=     =,     %   ,+  ,% %    .%
+                --_%     *#+   *#@#+         *%@%*   +#--     @_--
+                 .#      %                             %       %
+                 @   #    *,        E ,   ,          ,%      #, @
+                 % .*@     %,       E  *_*          ,@       @ *#
+                  +@ *,      *_,    E            ,_%        =*
+                      *%,  #___+@m_,         ,_m@+-__@     @
+                        @ .@     %  *--mmm--*  %     %   ,%
+                       .@_*     *,_-  %   %  -_,*   .@_-*
+                                  %__-^*@*^-__%
+                                  _-^   #   ^-_
+                                 #,    * *    ,#
+                                   *__#: :@__*
+)fumo";
+static fumo_data mystia = {
+  fumoMystia,
+  {230, 140, 135},
+  {"Mystia", "Lorelei", ""}
+};
+
+// Kyouko Kasodani
+static char fumoKyouko[] = R"fumo(
+            \
+             \
+              \
+               \     _--***-,        ______          ,-***--_
+                  ,@%        % __--+*      *+---__  %        %@,
+                ,@        _-+*                    *@,           @,
+              ,%       _-*                           *#.          %,
+            ,@       +=_,                               %,   *%,   +*
+           ;*    ;    ,*                                 @,     @    %
+         .@     @   ,#                                     %     %,   %,
+        ,%     %   ,@                                       #,    @    @,
+        @     @   ,%              @         .                @,    %    %
+       +     *    @         ,    =@,       @#    #m           %     @   *=
+       %   ,     =+        @ %.  % %     .% +,  @ %_          +=         %
+      +@_-*%  ,+ %        =+   *_# *@    *    *#    @,        *@      *-_@+
+            %* ^_@        @ -=+*#%*+=@,  %--=+#%+==-- @        %  #   %
+                 @=%      %  @  %    @ *_# @  @    %  %      @ @,* *_@*
+                 @= @.    @  %*^     @     @*^     @  @     % =%
+                 %   %,   %   %     %       %     %   #   ,*  =@
+                =*     -__#+   *+_+*         *+_+*  +#__-*    =%
+               -*         *,                         ,+        @
+               %  _;       @        E                @         %,
+              @  %@        %+,      E  *_*         ,+@          @
+              +_* %        @  %_    E            _%  ,%      *#  %.
+                  @         %-#+*-__         __-*+#+_*        %-__+
+                   @,         % @   ^-------^   @ %           @
+                    #,       @ # *,  %,  _-*  ,% # @        ,@
+                      *-___-*  %,  m%m-*^  _-*  ,@  *%,___+%
+                                ,+@   @__-*   ,@*
+                              ,&  %+_+%  __,%*
+                            *@   @ %  @^^
+                              *_#  #   @
+                                   @++*
+)fumo";
+static fumo_data kyouko = {
+  fumoKyouko,
+  {155, 215, 155},
+  {"Kyouko", "Kasodani", ""},
+};
+
+// Keine Kamishirasawa
+static char fumoKeine[] = R"fumo(
+             \
+              \               ______         ______
+               \             #      *,     ,*      #
+                \            `@       #, ,#       @`
+                 \         ,m#@+--__, ,m@m, ,__--+@%m,
+                         +@,         =%   @=         ,@+
+                            *+,___---+^%m%^+---___,+*
+                            ,%     ,#*     *#,     %,
+                            #____+*           *+____#
+                          ,m++#++---=========---++#++m,
+                          #                           #
+                         ,#@+++******%%@@@%%******+++@#,
+                       ,@*   %m___________________m%   *#,
+                     ,%                                   %,
+                   ,@                                      *@
+                  ,%       %.                               =+
+                 ,@       @     ,+                           *@
+                 %        %    % #         ,#,                %
+                +=        %   +* %,       :% =%,         ,    =+
+                @         +,  %   *,     .@    *@,    ,   %    @
+                @        ; *+_%     %,   *.       #m   %,  *.  %
+                %  #    -+       -----*-_#------    *@, *#  @  @
+                % .@,   #  #===========   ===========# *-_+_#  +:
+               ,*,* #   @  I %  #    #     %  #    @ I @       *:
+              +#+    %, +    @*^     @     @*^     @   @     . @
+                @ ;    *%@.  *,     %      *,     %   % ,    * #
+                # %     #      *-_-*         *-_-*  .+-*     @ @
+                % #     @                              %     @ %
+                # @      @,         E                  %     % *,
+               ,% #      % +_       E  +_+          _+ @     @  %
+               @ ,%      @   *%,    E            ,%*   @    :%  #
+             ,%  @      ,%      *%-__,     ,__-%*     .+    @   %
+             @   %     ,@        ,+  %`````%  +,      @    #    @
+            @    *.   =*         @    *___*    @     @   ,%     @
+            %     #,  %           *+    ,    +*    +#__-=       %
+            *,      *+@#            *--^ ^--*                  @
+                                                             #*
+)fumo";
+static fumo_data keine = {
+  fumoKeine,
+  {180, 245, 250},
+  {"Keine", "Kamishirasawa", ""},
+};
+
+// Hieda no Akyuu (R.I.P.)
+static char fumoAkyuu[] = R"fumo(
+            \
+             \
+              \                                  m%@@@%--_
+               \                      ,m%@@%+-_ %   ___   %
+                \             ,__---=*        .#*-,#    *-,@
+                           ,m@*     #         %            %
+                        ,m@*        @        @     ,m%m,   .@
+                       @*           %        %    +*    % +# _-**%-,
+                     ,%             =+       %#-  %,   ,@   @,--,  *:
+                    *+               @,  ,*** %    ^%m%^    @    @  @
+                   %*                 *%     ,*_     ,    ,% *--*  %
+                  +=                    ^*--^   *-__+@+__*  # -@+-^
+                 ,#                   ,         ,     @  @   %  %,
+                 +-          #       @         #+      #  #   *, =#
+                 %      @    *@,    =+%   ,@. + @,      %  @   #@  %
+                 %      +%   # %,   #  @  @ % @  =@,     @  @  @ #  %.
+                 @      % *@+    *+_@   ^-+  *#    *%.    #  *,=  @  *,
+                 @,     % --+*#@@#*+--   --=*#@@#*+--@,    @  @+   #  #,
+                 =%     %  @  %     @     @  #     @  @     @  #    #  #,
+                ++ @,   %  @*^      @     @*^      @  @    ,%.  #    #  #
+                %   *,  %   %      %       %      %  *   ,%  #,  @    @^
+               @      *@#+   *-__-*         *-__-*  +%--^    +*__#
+              %        %.                             @     @
+             @*  ,      @,         E                 +=    % #
+           +#@-*%        *%,       E  ^_^          ,+@    @  %
+               @_          *%m,    E            ,m% @   _*   #
+                 *---_______.- *%--_________--%@  +#+--* ___+*
+                              # @   @,   ,@  ,@***------*
+                             =+  %   % ,%   %  =+
+                             @,_  @,  @   ,*m#m,@
+                             @  ^*----#--+@@   @+.
+                             *--_______+%  *-_-*  %
+                                       @   %   =   @
+                                       %___#   #  ,#
+                                               #+*
+)fumo";
+static fumo_data akyuu = {
+  fumoAkyuu,
+  {225, 110, 135},
+  {"Akyuu", "Hieda", ""},
+};
+
 /* ===== data section ===== */
 
 // number of fumos
-#define FUMO_COUNT 56
+#define FUMO_COUNT 60
 
-// data of fumos, references fumo_data from above with a '&'
-const fumo_data *FUMO_LIST[FUMO_COUNT] = {
+// data of fumos, references static fumo_data from above with a '&'
+const static fumo_data *FUMO_LIST[FUMO_COUNT] = {
 
   &reimu, &patchouli, &marisa, &flandre, &joon,
 
@@ -2461,11 +2643,11 @@ const fumo_data *FUMO_LIST[FUMO_COUNT] = {
 
   &nazrin, &okina, &orin, &parsee, &nue,
 
-  &chimata
+  &chimata, &mystia, &kyouko, &keine, &akyuu,
 };
 
 #define EXPRESSION_COUNT 7
-const char *EXPRESSIONS[] = {
+const static char *EXPRESSIONS[] = {
   /* alternate expressions for fumos, 8x3 each
      the first character of each line would be placed at the 'E'
      Adding new expressions requires also editing fumosay.c (function fumo_expr)! */
@@ -2498,3 +2680,6 @@ const char *EXPRESSIONS[] = {
   R"( ^+___+^)"
   R"(        )",
 };
+
+// This is the end :)
+#endif

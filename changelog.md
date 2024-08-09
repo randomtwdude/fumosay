@@ -1,3 +1,24 @@
+### v1.2 - 2024/08/09
+In remembrance of Hieda no Akyuu.<br>
+This is *the* big update until I figure out how to make animated fumos!
+- Added Unicode support:<br>
+  - Provided by GNU `libunistring`
+  - UTF-8 is assumed
+  - Everything should display properly now.
+- Rainbows & colors work with unicode too!<br>
+  - ANSI escape sequences no longer breaks offset
+  - You can finally pipe colored fumosay output into fumosay
+![Fumoception](https://github.com/randomtwdude/fumosay/blob/main/images/fumoception.png?raw=true)
+- Added 4 new fumos:<br>
+  - Mystia's Izakaya at the Human Village: Mystia, Kyouko, Akyuu, and Keine!
+- Fixed broken output when reading from the shell in Windows (CR strikes again)
+- Messages from the command line will now be properly split by space
+- No more (unintentional) memory leaks
+- Reorganized code files:<br>
+  - `fumosay.c` can now compile with the Cosmopolitan toolchain
+  - no longer including C files in other C files
+- `fsgq2.py` replaces `fsgq.sh`
+
 ### v1.1.10 - 2024/07/21
 Finally, fumo completeness.
 - Added 4 new fumos:<br>
