@@ -150,7 +150,8 @@ char *replaceTab(char *token, short tabstop) {
   int size_byte = strlen(token) + 1;
   for (int i = 0; token[i]; i += 1) {
     if (token[i] == '\t') {
-      short shift = tabstop - (i % tabstop);
+      token[i] = 0;
+      short shift = tabstop - (strlen_real(token) % tabstop);
       token = realloc(token, (size_byte += shift - 1));
       memmove(&token[i + shift], &token[i + 1], size_byte - shift - i);
       memset(&token[i], 32, shift);
