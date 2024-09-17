@@ -62,7 +62,7 @@ while True:
 
 
 # extract quote
-sayer  = re.search(r"(?<=\-- )([\w\s](?! to))+\w", gq).group(0)
+sayer  = re.search(r"(?<=\n-- )([\w\s](?! to))+\w", gq).group(0)
 saying = re.search(r"(?<=^\").*(?=\")", gq).group(0)
 
 # gimmick
