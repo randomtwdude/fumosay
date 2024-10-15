@@ -20,12 +20,13 @@
 #define RESET_COLOR printf("\033[0m");
 
 #ifndef __COSMOCC__
-#define VERSION_STRING "fumosay 1.2\n"
+#define VERSION_STRING "fumosay 1.2.1\n"
 #else
-#define VERSION_STRING "fumosay 1.2 cosmos\n"
+#define VERSION_STRING "fumosay 1.2.1 cosmos\n"
 #endif
 
 int MAX_WIDTH = 80;
+bool isByakuren = false;
 
 /* ===== FUNCTIONS ===== */
 void fumo_help(fumo_who fm) {
@@ -241,8 +242,10 @@ int main(int argc, char **argv) {
   fumo_expr(fm, expr, custom_expr);
 
   // colours
-  if (strcmp(FUMO_LIST[fm]->name[0], "Chimata") == 0) {
+  if (fm == 55) {
     rainbow = true;
+  } else if (fm == 60) {
+    isByakuren = true;
   }
 
   int (*fumo_say)(const char *, FILE *);
@@ -260,7 +263,9 @@ int main(int argc, char **argv) {
 
   // CYOA mode
   if (display_name) {
-    printf("%s says:\n", FUMO_LIST[fm]->name[0]);
+    char cyoa_str[64];
+    sprintf(cyoa_str, "%s says:\n", FUMO_LIST[fm]->name[0]);
+    fumo_say(cyoa_str, stdout);
   }
 
   // top line

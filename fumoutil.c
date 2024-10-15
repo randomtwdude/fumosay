@@ -95,7 +95,6 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
 
 /* Lists all fumos */
 void fumo_list() {
-  printf("There are %d fumos!\n-------------------\n", FUMO_COUNT);
   for (int i = 0; i < FUMO_COUNT; i += 1) {
     fputs(FUMO_LIST[i]->name[0], stdout);
     fputs("\n", stdout);

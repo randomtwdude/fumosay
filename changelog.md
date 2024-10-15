@@ -1,3 +1,11 @@
+### v1.2.1 - 2024/10/15
+MORE FUMOS
+- Added 4 new fumos:<br>
+  Byakuren, Medicine, Shinmyoumaru, and Ellen!<br>
+  Byakuren even has her own special rainbow colors.
+- The 'Reimu says:' text (with `-g`) will now be colored when used with rainbows
+- Fixed wrong fumo when the message contains the word `to` in `fsgq2.py`
+
 ### v1.2 - 2024/08/09
 In remembrance of Hieda no Akyuu.<br>
 This is *the* big update until I figure out how to make animated fumos!

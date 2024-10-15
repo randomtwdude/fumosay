@@ -263,6 +263,7 @@ char **splitWords(char **words, int *count) {
   return words;
 }
 
+// this and lolfumo from jaseg/lolcat
 // we only really need ST_NONE
 static enum esc_st _find_escape_sequences(char c, enum esc_st st) {
   if (st == ST_NONE || st == ST_ESC_CSI_TERM) {
@@ -309,6 +310,13 @@ static enum esc_st _find_escape_sequences(char c, enum esc_st st) {
   }
 }
 
+// we're doing gradients now too
+void rgb_interpolate(color *start, color *end, int *r, int *g, int *b, double f) {
+  *r = start->R + (end->R - start->R) * f;
+  *g = start->G + (end->G - start->G) * f;
+  *b = start->B + (end->B - start->B) * f;
+}
+
 /* lolcat but fumo (rainbow fputs + utf8) */
 int lolfumo(const char *str, FILE *dest) {
   static int col = 0, line = 0;
@@ -342,12 +350,21 @@ int lolfumo(const char *str, FILE *dest) {
     }
 
     // get rainbow color
+    int red, green, blue;
     double theta = col * hFreq / 5.0 + line * vFreq + rainbow_start;
-    int red   = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 0))));
-    int green = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 2 * M_PI / 3))));
-    int blue  = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 4 * M_PI / 3))));
+    if (isByakuren) {
+      // special gradient just for her
+      color purple = {185, 120, 235};
+      color yellow = {240, 195, 130};
+      theta = fmodf(theta / 2.0 / M_PI, 2.0f);
+      theta = theta > 1.0 ? 2.0 - theta : theta;
+      rgb_interpolate(&purple, &yellow, &red, &green, &blue, theta);
+    } else {
+      red   = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 0))));
+      green = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 2 * M_PI / 3))));
+      blue  = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 4 * M_PI / 3))));
+    }
     SET_COLOR(red, green, blue);
-
     // print this code point
     for (int j = 0; j < unit_size; j += 1) {
       fputc(str[i + j], dest);

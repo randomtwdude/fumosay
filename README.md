@@ -1,11 +1,11 @@
 # fumosay
-Like the classic cowsay, but featuring Touhou fumos, written in C.
+Like cowsay, but featuring Touhou fumos, written in C.
 
 ```
 Written in the spirit of funkyness.
 ```
 
-![In memory of Hieda no Akyuu.](https://github.com/randomtwdude/fumosay/blob/main/images/fumosay.png?raw=true)
+![Kettle](https://github.com/randomtwdude/fumosay/blob/main/images/fumosay-1.2.1.png?raw=true)
 
 ## Features
 - ᗜˬᗜ<br>
@@ -19,7 +19,7 @@ Written in the spirit of funkyness.
 - Rainbows and Unicode<br>
   UTF-8 is now supported!
 - Portable<br>
-  Works on all your OSes. (Windows support freshly fixed)
+  Works on all your OSes. (antiviruses don't like it though)
 
 ## Fumos
 They look best with the font [Cascadia Code](https://github.com/microsoft/cascadia-code).
@@ -29,12 +29,17 @@ Every Touhou character with a Gift fumo is included, *plus*:
 - Kyouko
 - Akyuu (R.I.P.)
 - Keine
+- Byakuren
+- Medicine
+- Shinmyoumaru
+- Ellen
 
 ## Updates
 More or less weekly update. See [changelog](changelog.md).
 
 ## Install
-Fumosay is now on the Arch User Repository: `paru fumosay`<br>
+Fumosay is now on the Arch User Repository: `paru fumosay`
+
 For other Linux users:
 1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section.
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
@@ -44,7 +49,9 @@ gcc -o fumosay fumosay.c fumoutil.c fumolang.c -lm -lunistring
 # move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
-For other platforms, Actually Portable Executable (updated to `v1.2`) [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.2).
+For other platforms, Actually Portable Executable [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.2) for version 1.2.
+
+> The APE is outdated because I forgot how to build it :skull:
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`

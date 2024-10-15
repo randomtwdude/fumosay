@@ -6,12 +6,15 @@
 #ifndef FUMO_LANG_H
 #define FUMO_LANG_H
 
+#include "fumoutil.h"
 #include <stdio.h>
 #include <stdbool.h>
 
 #define SET_COLOR(r,g,b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
 
+// in fumosay.c
 extern int MAX_WIDTH;
+extern bool isByakuren;
 
 // Marisa borrowed the ANSI code from github.com/jaseg/lolcat
 enum esc_st {
@@ -31,6 +34,7 @@ void wordWrapper(int count, char **words, size_t width, size_t bubble,
                  bool no_wrap, bool cmd, int (*fumo_say)(const char *, FILE *));
 
 static enum esc_st find_escape_sequences(char c, enum esc_st st);
+void rgb_interpolate(color *start, color *end, int *r, int *g, int *b, double f);
 int lolfumo(const char *str, FILE *dest);
 int strlen_real(char *str);
 char *getInput(FILE *st, size_t size);
