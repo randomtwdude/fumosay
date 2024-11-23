@@ -28,7 +28,7 @@ analyzer = SentimentIntensityAnalyzer()
 args, flags = parser.parse_known_args()
 
 # get the list of fumos
-fumo_list = subprocess.run(["./fumosay", "-l"], stdout=subprocess.PIPE).stdout.decode("utf-8")
+fumo_list = subprocess.run(["fumosay", "-l"], stdout=subprocess.PIPE).stdout.decode("utf-8")
 fumo_list = fumo_list.split('\n')[2:-1]
 
 # refine the list of fumos
@@ -84,7 +84,7 @@ match ps["compound"]:
 if "Sakuya" in sayer and random.randint(0, 10) < 2:
     sayer = "puppo"
 
-subprocess.run(["./fumosay", "-f", sayer, "-E", expr] + flags, input=saying.encode("utf-8"))
+subprocess.run(["fumosay", "-f", sayer, "-E", expr] + flags, input=saying.encode("utf-8"))
 
 if args.debug:
     print("[DEBUG] Original gensoquote:\n" + gq)

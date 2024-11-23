@@ -1,3 +1,9 @@
+### v1.2.2 - 2024/11/23
+My Youtube Music Recap is 46% Touhou.
+- Added 4 new fumos:<br>
+  Yuuma, Doremy, Seiga, and Kosuzu!
+- Fixed `fsgq2.py` after I forgot to revert the debugging changes again
+
 ### v1.2.1 - 2024/10/15
 MORE FUMOS
 - Added 4 new fumos:<br>

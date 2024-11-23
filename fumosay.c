@@ -20,9 +20,9 @@
 #define RESET_COLOR printf("\033[0m");
 
 #ifndef __COSMOCC__
-#define VERSION_STRING "fumosay 1.2.1\n"
+#define VERSION_STRING "fumosay 1.2.2\n"
 #else
-#define VERSION_STRING "fumosay 1.2.1 cosmos\n"
+#define VERSION_STRING "fumosay 1.2.2 cosmos\n"
 #endif
 
 int MAX_WIDTH = 80;
@@ -32,8 +32,11 @@ bool isByakuren = false;
 void fumo_help(fumo_who fm) {
   printf("fumosay: funky talking fumofumos\n"
          "--------------------------------\n"
-         "Usage: fumosay [-hvlngrRb] [-c] [-W column] [-f name] [-E expression] (message)\n"
+         "Usage: fumosay [-hvl] [ngrRb] [-c] [-W column] [-f name] [-E expression] (message)\n"
          "-l     List all fumos.\n"
+         "-h     Display this message.\n"
+         "-v     Show version.\n"
+         "\n"
          "-n     Disable word-wrapping. Overrides -W.\n"
          "-W     Specify roughly where the message should be wrapped.\n"
          "       The default is 80.\n"
@@ -46,8 +49,6 @@ void fumo_help(fumo_who fm) {
          "-r     Rainbow message courtesy of Tenkyuu Chimata.\n"
          "-R     Rainbow fumo as well.\n"
          "-b     Bold font.\n"
-         "-h     Display this message.\n"
-         "-v     Show version.\n"
          "--------------------------------\n"
          "In spirit of the original cowsay, made by Tony Monroe in 1999.\n"
          "Fumos feature characters from Touhou Project, say hi to ");

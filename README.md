@@ -29,15 +29,19 @@ Every Touhou character with a Gift fumo is included, *plus*:
 - Kyouko
 - Akyuu (R.I.P.)
 - Keine
-- Byakuren
 - Medicine
 - Shinmyoumaru
 - Ellen
+- Seiga
+- Doremy
+- Kosuzu
 
 ## Updates
 More or less weekly update. See [changelog](changelog.md).
 
 ## Install
+libunistring is required for compilation.
+
 Fumosay is now on the Arch User Repository: `paru fumosay`
 
 For other Linux users:
@@ -49,9 +53,7 @@ gcc -o fumosay fumosay.c fumoutil.c fumolang.c -lm -lunistring
 # move the fumos somewhere comfy (like ~/.local/bin)
 ```
 
-For other platforms, Actually Portable Executable [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.2) for version 1.2.
-
-> The APE is outdated because I forgot how to build it :skull:
+For other platforms, Actually Portable Executable [available](https://github.com/randomtwdude/fumosay/releases/tag/fumo1.2.2)!
 
 ## Use
 - `fumosay Hello World!` | `fumosay -n < textfile` | `echo Hi | fumosay -f tenshi`
