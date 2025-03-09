@@ -43,7 +43,7 @@ More or less weekly update. See [changelog](changelog.md).
 
 Fumosay is now on the Arch User Repository: `paru fumosay`
 
-### Compliling from source
+### Compiling from source
 To compile fumosay, you need to install [GNU libunistring](https://www.gnu.org/software/libunistring)
 1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section.
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
