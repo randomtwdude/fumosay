@@ -40,11 +40,11 @@ Every Touhou character with a Gift fumo is included, *plus*:
 More or less weekly update. See [changelog](changelog.md).
 
 ## Install
-libunistring is required for compilation.
 
 Fumosay is now on the Arch User Repository: `paru fumosay`
 
-For other Linux users:
+### Compliling from source
+To compile fumosay, you need to install [GNU libunistring](https://www.gnu.org/software/libunistring)
 1. Download the latest package from the [release](https://github.com/randomtwdude/fumosay/releases) section.
 2. Extract the package (`tar xf fumosay-{version}.tar.gz`)
 3. `cd fumosay-{version}`
