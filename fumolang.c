@@ -327,7 +327,7 @@ int lolfumo(const char *str, FILE *dest) {
   // every rainbow is different
   static double rainbow_start = -1.0;
   if (rainbow_start == -1.0) {
-    rainbow_start = 2.0 * M_PI * random_clamped(RAND_MAX) / RAND_MAX;
+    rainbow_start = 2.0 * M_PI * random_uniform(RAND_MAX) / RAND_MAX;
   }
 
   int i = 0;

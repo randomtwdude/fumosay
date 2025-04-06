@@ -27,7 +27,7 @@ They look best with the font [Cascadia Code](https://github.com/microsoft/cascad
 Every Touhou character with a Gift fumo is included, *plus*:
 - Mystia
 - Kyouko
-- Akyuu (R.I.P.)
+- Akyuu
 - Keine
 - Medicine
 - Shinmyoumaru
@@ -35,6 +35,10 @@ Every Touhou character with a Gift fumo is included, *plus*:
 - Seiga
 - Doremy
 - Kosuzu
+- Sunny
+- Luna
+- Star
+- Lily
 
 ## Updates
 More or less weekly update. See [changelog](changelog.md).

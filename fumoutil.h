@@ -10,17 +10,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/random.h>
 
 #define ALPHABET 128
 #define WORDLEN 63
-
-#ifndef __COSMOCC__
-// we use arc4random because FAIRNESS (also fancy)
-#define random_clamped(x) arc4random_uniform(x)
-#else
-// cosmos doesn't have it, so good ol' random() will do
-#define random_clamped(x) (random() % (x))
-#endif
 
 typedef struct color {
   short R; short G; short B;
@@ -41,5 +34,6 @@ void fumo_fumo(fumo_who fm, int (*fumo_say)(const char *, FILE *));
 void fumo_panic(char *, char, char *);
 
 int bitap(char *haystack, char *needle, int max_dist);
+int random_uniform(int num);
 
 #endif

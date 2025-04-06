@@ -20,9 +20,9 @@
 #define RESET_COLOR printf("\033[0m");
 
 #ifndef __COSMOCC__
-#define VERSION_STRING "fumosay 1.2.2\n"
+#define VERSION_STRING "fumosay 1.2.3\n"
 #else
-#define VERSION_STRING "fumosay 1.2.2 cosmos\n"
+#define VERSION_STRING "fumosay 1.2.3 cosmos\n"
 #endif
 
 int MAX_WIDTH = 80;
@@ -63,7 +63,7 @@ void fumo_help(fumo_who fm) {
 int numberize(char *c) {
   long number = strtol(c, 0, 0);
   if (number == 0) {
-    printf("ᗜ_ᗜ: Invalid parameter %s\n", c);
+    fprintf(stderr, "ᗜ_ᗜ: Invalid parameter %s\n", c);
   }
   return (int)number;
 }
@@ -80,16 +80,13 @@ int main(int argc, char **argv) {
   char expr = 0;
   char custom_expr[30] = {0};
   fumo_who fm = -1;
-  #ifdef __COSMOCC__
-  srandom(getpid()); // seed random for cosmos
-  #endif
 
   // argument
   char opt;
   while ((opt = getopt(argc, argv, "hvlngrRbc::E:W:f:")) != -1) {
     switch (opt) {
     case 'h':;
-      fumo_who helper_fumo = random_clamped(FUMO_COUNT);
+      fumo_who helper_fumo = random_uniform(FUMO_COUNT);
       fumo_help(helper_fumo);
       fumo_expr(helper_fumo, expr, custom_expr);
       fumo_fumo(helper_fumo, fputs);
@@ -117,7 +114,7 @@ int main(int argc, char **argv) {
         token = strtok(NULL, ",.;/|");
       }
       if (choices) {
-        fm = choices[random_clamped(choice_count)];
+        fm = choices[random_uniform(choice_count)];
         free(choices);
       }
       break;
@@ -214,13 +211,16 @@ int main(int argc, char **argv) {
     }
     memcpy(word_vector, argv + optind, word_count * sizeof(char *));
 
-    // tabs
+    char *newline = NULL;
     for (int i = 0; i < word_count; i++) {
+      // remove newlines from cmd message
+      while ((newline = strchr(word_vector[i], '\n'))) {
+        *newline = ' ';
+      }
+      // replace tabs with spaces
       if (strchr(word_vector[i], '\t') == NULL) {
         continue;
       }
-      // this is a memory leak, but better than
-      // having to have another copy of every word
       char *token = strdup(word_vector[i]);
       word_vector[i] = replaceTab(token, 8);
     }
@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
 
   // choose a fumo if not already chosen
   if (fm == -1) {
-    fm = random_clamped(FUMO_COUNT);
+    fm = random_uniform(FUMO_COUNT);
   }
 
   // finalize expression
@@ -287,13 +287,15 @@ int main(int argc, char **argv) {
         *nl = 0; // strip the last newline of the paragraph
       }
       process += last_section;
-      wordWrapper(cur_section,
-                   process,
-                   bubble_width - 2,
-                   bubble_width,
-                   no_wrap,
-                   optind != argc,
-                   fumo_say);
+      wordWrapper(
+        cur_section,
+        process,
+        bubble_width - 2,
+        bubble_width,
+        no_wrap,
+        optind != argc,
+        fumo_say
+      );
       last_section = cur_section;
       cur_section = 0;
     }

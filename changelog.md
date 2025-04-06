@@ -1,3 +1,12 @@
+### v1.2.3 - 2025/04/06
+Say YA!!!
+- Added 4 new fumos:<br>
+  The fairies (and spring) have arrived! Sunny, Luna, Star, and Lily are here.
+- Added 1 new expression preset:<br>
+  Luna does the :D face.
+- Newlines in command line messages no longer cut off everything after.
+- Now uses getrandom() for all builds.
+
 ### v1.2.2 - 2024/11/23
 My Youtube Music Recap is 46% Touhou.
 - Added 4 new fumos:<br>

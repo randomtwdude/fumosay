@@ -77,8 +77,10 @@ void fumo_expr(fumo_who fm, char ex, char *custom) {
     set_expression(5); break;
   case 'b':
     set_expression(6); break;
+  case 'd':
+    set_expression(7); break;
   case 'r':;
-    int r = random_clamped(EXPRESSION_COUNT);
+    int r = random_uniform(EXPRESSION_COUNT);
     set_expression(r);
     break;
   default:
@@ -109,7 +111,7 @@ void fumo_fumo(fumo_who fm, int (*fumo_say)(const char *, FILE *)) {
 /* Says a message then exits */
 void fumo_panic(char *message, char expr, char *custom_expr) {
   fputs(message, stdout);
-  fumo_who helper_fumo = random_clamped(FUMO_COUNT);
+  fumo_who helper_fumo = random_uniform(FUMO_COUNT);
   fumo_expr(helper_fumo, expr, custom_expr);
   fumo_fumo(helper_fumo, &fputs);
   exit(EXIT_FAILURE);
@@ -168,4 +170,24 @@ int bitap(char *haystack, char *needle, int max_dist) {
   free(m);
   free(pattern);
   return score;
+}
+
+// New RNG
+int random_uniform(int num) {
+  if (num < 1) {
+    fprintf(stderr, "ᗜ_ᗜ: invalid num passed to random.\n");
+    num = FUMO_COUNT;
+  }
+
+  uint32_t r;
+  uint32_t limit = UINT32_MAX - (UINT32_MAX % num);
+
+  do {
+    getrandom(&r, sizeof(r), 0);
+    if (r == -1) {
+      fumo_panic("ᗜxᗜ: fumo panic - getrandom failed", 0, "");
+    }
+  } while (r >= limit);
+
+  return r % num;
 }
