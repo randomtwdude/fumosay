@@ -8,21 +8,23 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/random.h>
 
 #define ALPHABET 128
 #define WORDLEN 63
 
 typedef struct color {
-  short R; short G; short B;
+    short R;
+    short G;
+    short B;
 } color;
 
 typedef struct fumo_data {
-  char *fumo;    // fumo ascii art
-  color color;    // [object Object]
-  char  *name[];   // all the names
+    char *fumo;   // fumo ascii art
+    color color;  // [object Object]
+    char *name[]; // all the names
 } fumo_data;
 
 typedef int fumo_who;
