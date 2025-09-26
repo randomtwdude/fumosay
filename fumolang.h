@@ -40,7 +40,7 @@ void wordWrapper(
     int (*fumo_say)(const char *, FILE *)
 );
 
-static enum esc_st find_escape_sequences(char c, enum esc_st st);
+enum esc_st find_escape_sequences(char c, enum esc_st st);
 void rgb_interpolate(color *start, color *end, int *r, int *g, int *b, double f);
 int lolfumo(const char *str, FILE *dest);
 int strlen_real(char *str);

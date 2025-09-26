@@ -183,7 +183,7 @@ char **splitWords(char **words, int *count)
         ucs4_t ch;
         while (words[i][j]) {
             j += unit_size;
-            unit_size = u8_mbtouc(&ch, &words[i][j], 6);
+            unit_size = u8_mbtouc(&ch, (const uint8_t *)&words[i][j], 6);
             if (unit_size < 1) {
                 break;
             }
@@ -196,7 +196,7 @@ char **splitWords(char **words, int *count)
 
             // seek to next non-space code point
             while (uc_is_property_space(ch) || ch == 0x0009) {
-                unit_size = u8_mbtouc(&ch, &words[i][j], 6);
+                unit_size = u8_mbtouc(&ch, (const uint8_t *)&words[i][j], 6);
                 if (unit_size < 1) {
                     break;
                 }
@@ -230,7 +230,7 @@ char **splitWords(char **words, int *count)
         size_t size_byte  = strlen(words[i]);
         int chosen_break  = 0;
         char *good_breaks = malloc(size_byte);
-        u8_grapheme_breaks(words[i], size_byte, good_breaks);
+        u8_grapheme_breaks((const uint8_t *)words[i], size_byte, good_breaks);
 
         // start looking just before where we could reach max_width
         for (int j = MAX_WIDTH - 2; j < size_byte; j += 1) {
@@ -339,7 +339,7 @@ int lolfumo(const char *str, FILE *dest)
     while (str[i]) {
         i += unit_size;
         // skip ANSI controls
-        unit_size = u8_mblen(&str[i], 6);
+        unit_size = u8_mblen((const uint8_t *)&str[i], 6);
         if (unit_size < 1) {
             break;
         }
@@ -379,7 +379,7 @@ int lolfumo(const char *str, FILE *dest)
             col = 0;
             line += 1;
         } else {
-            col += u8_width(&str[i], unit_size, "UTF-8");
+            col += u8_width((const uint8_t *)&str[i], unit_size, "UTF-8");
         }
     }
     return i;
@@ -396,7 +396,7 @@ int strlen_real(char *str)
     short unit_size   = 0;
 
     for (int i = 0; i < byte_count; i += unit_size) {
-        unit_size = u8_mblen(&str[i], 6);
+        unit_size = u8_mblen((const uint8_t *)&str[i], 6);
         if (unit_size < 1) {
             break;
         }
@@ -410,7 +410,7 @@ int strlen_real(char *str)
             state = ST_NONE; // should be fine?
         }
 
-        length += u8_width(&str[i], unit_size, "UTF-8");
+        length += u8_width((const uint8_t *)&str[i], unit_size, "UTF-8");
     }
     return length;
 }

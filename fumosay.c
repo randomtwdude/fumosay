@@ -162,7 +162,7 @@ int main(int argc, char **argv)
                         padding = optarg[24] = 0; // ensure non-negative padding & truncate string
                     }
                     sprintf(
-                        custom_expr, "%s%.*s", optarg, padding, "                              "
+                        custom_expr, "%s%.*s", optarg, padding, "                             "
                     );
                 } else {
                     expr = optarg[0];
