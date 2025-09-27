@@ -3,6 +3,12 @@
 // ᗜ_ᗜ have a nice day ᗜˬᗜ
 
 /* ===== INCLUDES ===== */
+
+// https://github.com/skeeto/optparse
+#define OPTPARSE_IMPLEMENTATION
+#define OPTPARSE_API static
+#include "optparse.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,17 +24,11 @@
 // Everything text
 #include "fumolang.h"
 
-#define SET_COLOR(r, g, b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
-#define RESET_COLOR printf("\033[0m");
-
 #ifndef __COSMOCC__
 #define VERSION_STRING "fumosay 1.2.3\n"
 #else
 #define VERSION_STRING "fumosay 1.2.3 cosmos\n"
 #endif
-
-int MAX_WIDTH   = 80;
-bool isByakuren = false;
 
 /* ===== FUNCTIONS ===== */
 void fumo_help(fumo_who fm)
@@ -58,9 +58,9 @@ void fumo_help(fumo_who fm)
         "Fumos feature characters from Touhou Project, say hi to "
     );
 
-    SET_COLOR(FUMO_LIST[fm]->color.R, FUMO_LIST[fm]->color.G, FUMO_LIST[fm]->color.B);
+    SET_COLOR(FUMO_LIST[fm]->color);
     fputs(FUMO_LIST[fm]->name[0], stdout);
-    RESET_COLOR;
+    RESET_FORMAT;
     fputs("!\n", stdout);
 }
 
@@ -77,160 +77,179 @@ int numberize(char *c)
 int main(int argc, char **argv)
 {
     // init
-    bool no_wrap         = false;
-    bool display_name    = false;
-    char colour          = 0;
-    color custom_colour  = { 0, 0, 0 };
-    bool rainbow         = false;
-    bool rainbow_fumo    = false;
-    bool bold            = false;
-    char expr            = 0;
-    char custom_expr[30] = { 0 };
-    fumo_who fm          = -1;
+    fumo_settings pref = {
+        .fumo         = -1,
+        .no_wrap      = false,
+        .width        = 80,
+        .display_name = false,
+        .rainbow      = false,
+        .rainbow_fumo = false,
+        .bold         = false,
+        .color        = COLOR_OFF,
+        .custom_color = { .R = 0, .G = 0, .B = 0 },
+        .expr         = 0,
+        .custom_expr  = { 0 },
+    };
+    struct optparse options;
+    optparse_init(&options, argv);
 
     // argument
     char opt;
-    while ((opt = getopt(argc, argv, "hvlngrRbc::E:W:f:")) != -1) {
+    while ((opt = optparse(&options, "hvlngrRbc::E:W:f:")) != -1) {
         switch (opt) {
             case 'h':;
                 fumo_who helper_fumo = random_uniform(FUMO_COUNT);
                 fumo_help(helper_fumo);
-                fumo_expr(helper_fumo, expr, custom_expr);
+                fumo_expr(helper_fumo, pref.expr, pref.custom_expr);
                 fumo_fumo(helper_fumo, fputs);
                 return 0;
+
             case 'l':
                 fumo_list();
                 return 0;
+
             case 'n':
-                MAX_WIDTH = 100000000;
-                no_wrap   = true;
+                pref.no_wrap = true;
                 break;
+
             case 'W':
-                MAX_WIDTH = no_wrap ? MAX_WIDTH : numberize(optarg);
+                pref.width = pref.no_wrap ? pref.width : numberize(optarg);
                 break;
+
             case 'f':;
-                char *token        = strtok(optarg, ",.;/|");
-                short choice_count = 0;
-                short *choices     = NULL;
+                char *token    = strtok(options.optarg, ",;|");
+                short count    = 0;
+                short size     = 4;
+                short *choices = malloc(size * sizeof(short));
+                if (!choices) {
+                    FUMO_QUIT("ᗜxᗜ: fumo panic - memory allocation failed: processing '-f'.\n");
+                }
                 while (token) {
                     int choice = fumo_picker(token);
                     if (choice > -1) {
-                        choices = realloc(choices, ++choice_count * sizeof(short));
-                        choices[choice_count - 1] = choice;
+                        choices[count] = choice;
+                        count += 1;
+                        if (count == size) {
+                            size *= 2;
+                            choices = realloc(choices, size);
+                        }
                     }
-                    token = strtok(NULL, ",.;/|");
+                    token = strtok(NULL, ",;/");
                 }
-                if (choices) {
-                    fm = choices[random_uniform(choice_count)];
-                    free(choices);
-                }
+                pref.fumo = choices[random_uniform(count)];
+                free(choices);
                 break;
+
             case 'g':
-                display_name = true;
+                pref.display_name = true;
                 break;
+
             case 'c':
-                colour = 1;
-                if (optarg) {
-                    colour = 2;
-                    // custom color values
-                    char *token     = strtok(optarg, ",.;/|");
-                    custom_colour.R = strtol(token, NULL, 0);
+                if (options.optarg) {
+                    pref.color          = COLOR_CUSTOM;
+                    char *token         = strtok(optarg, ",.;/|");
+                    pref.custom_color.R = strtol(token, NULL, 0);
                     if ((token = strtok(NULL, ",.;/|"))) {
-                        custom_colour.G = strtol(token, NULL, 0);
+                        pref.custom_color.G = strtol(token, NULL, 0);
                     }
                     if ((token = strtok(NULL, ",.;/|"))) {
-                        custom_colour.B = strtol(token, NULL, 0);
+                        pref.custom_color.B = strtol(token, NULL, 0);
                     }
+                } else {
+                    pref.color = COLOR_ON;
                 }
                 break;
+
             case 'r':;
-                rainbow = true;
+                pref.rainbow = true;
                 break;
+
             case 'R':;
-                rainbow      = true;
-                rainbow_fumo = true;
+                pref.rainbow      = true;
+                pref.rainbow_fumo = true;
                 break;
+
             case 'b':;
-                bold = true;
+                pref.bold = true;
                 break;
+
             case 'E':;
-                int optlen = strlen(optarg);
+                int optlen = strlen(options.optarg);
                 if (optlen > 1) {
                     // use custom expression
-                    short padding = 24 - strlen(optarg);
+                    short padding = 24 - strlen(options.optarg);
                     if (padding < 0) {
-                        padding = optarg[24] = 0; // ensure non-negative padding & truncate string
+                        // ensure non-negative padding & truncate string
+                        padding = options.optarg[24] = 0;
                     }
                     sprintf(
-                        custom_expr, "%s%.*s", optarg, padding, "                             "
+                        pref.custom_expr,
+                        "%s%.*s",
+                        options.optarg,
+                        padding,
+                        "                             "
                     );
                 } else {
-                    expr = optarg[0];
+                    pref.expr = options.optarg[0];
                 }
                 break;
+
             case 'v':;
-                printf(VERSION_STRING);
+                puts(VERSION_STRING);
                 return 0;
+
+            case '?':
+                fprintf(stderr, "ᗜ_ᗜ: %s\n", options.errmsg);
+                return 1;
         } // switch
     }
 
-    if (MAX_WIDTH < 3) {
-        MAX_WIDTH = 3;
-    }
-
-    if (bold) {
-        fputs("\033[1m", stdout);
+    if (pref.width < 3) {
+        pref.width = 3;
     }
 
     // fumo reads
     int word_count     = 0;
     char **word_vector = NULL;
-    if (optind == argc) { // read from stdin
+    if (options.optind == argc) {
+        // read from stdin
         while (1) {
             char *token;
             token = getInput(stdin, 64);
             if (!token) {
-                fumo_panic(
-                    "ᗜxᗜ: fumo panic - memory allocation failed: getInput.\n", expr, custom_expr
-                );
+                FUMO_QUIT("ᗜxᗜ: fumo panic - memory allocation failed: getInput.\n");
             }
             if (0 == strlen(token)) {
-                free(token); /* sneaky 1-byte memory leak exterminated */
+                free(token);
                 break;
             }
-            if (no_wrap) {
+            if (pref.no_wrap) {
                 token = replaceTab(token, 8);
                 if (!token) {
-                    fumo_panic(
-                        "ᗜxᗜ: fumo panic - memory allocation failed: replaceTab.\n",
-                        expr,
-                        custom_expr
-                    );
+                    FUMO_QUIT("ᗜxᗜ: fumo panic - memory allocation failed: replaceTab.\n");
                 }
             }
             word_vector = realloc(word_vector, (word_count + 1) * sizeof(char *));
             if (!word_vector) {
-                fumo_panic(
-                    "ᗜxᗜ: fumo panic - memory allocation failed while reading!\n", expr, custom_expr
-                );
+                FUMO_QUIT("ᗜxᗜ: fumo panic - memory allocation failed: realloc.\n");
             }
-            word_vector[word_count++] = token;
+            word_vector[word_count] = token;
+            word_count += 1;
         }
 
-    } else { // read from cmd line arguments
-        word_count = argc - optind;
+    } else {
+        // read from cmd line arguments
+        word_count = argc - options.optind;
 
         // I can't realloc argv so this'll have to do
         word_vector = malloc(word_count * sizeof(char *));
         if (!word_vector) {
-            fumo_panic(
-                "ᗜxᗜ: fumo panic - memory allocation failed while reading!\n", expr, custom_expr
-            );
+            FUMO_QUIT("ᗜxᗜ: fumo panic - memory allocation failed: malloc.\n");
         }
-        memcpy(word_vector, argv + optind, word_count * sizeof(char *));
+        memcpy(word_vector, argv + options.optind, word_count * sizeof(char *));
 
         char *newline = NULL;
-        for (int i = 0; i < word_count; i++) {
+        for (int i = 0; i < word_count; i += 1) {
             // remove newlines from cmd message
             while ((newline = strchr(word_vector[i], '\n'))) {
                 *newline = ' ';
@@ -245,51 +264,57 @@ int main(int argc, char **argv)
     }
 
     // cut lines into words
-    if (!no_wrap) {
-        word_vector = splitWords(word_vector, &word_count);
+    if (!pref.no_wrap) {
+        word_vector = splitWords(&word_count, word_vector, pref.width);
     }
 
     // calculate the width of the bubble
-    int bubble_width = longestLineWidth(word_count, word_vector) + 1;
+    int bubble_width = longestLineWidth(word_count, word_vector, pref.width) + 1;
 
     // choose a fumo if not already chosen
-    if (fm == -1) {
-        fm = random_uniform(FUMO_COUNT);
-    }
+    pref.fumo = pref.fumo == -1 ? random_uniform(FUMO_COUNT) : pref.fumo;
 
     // finalize expression
-    fumo_expr(fm, expr, custom_expr);
+    fumo_expr(pref.fumo, pref.expr, pref.custom_expr);
 
-    // colours
-    if (fm == 55) {
-        rainbow = true;
-    } else if (fm == 60) {
-        isByakuren = true;
+    // check for special fumos
+    bool is_byakuren = false;
+    switch (fumo_check_special(pref.fumo)) {
+        case SPECIAL_CHIMATA:
+            pref.rainbow = true;
+            break;
+
+        case SPECIAL_BYAKUREN:
+            is_byakuren = true;
+            /* falls through */
+        case SPECIAL_NONE:
+            break;
     }
 
-    int (*fumo_say)(const char *, FILE *);
-    if (rainbow) {
-        fumo_say = &lolfumo;
-    } else {
-        fumo_say = &fputs;
+    int (*fumo_say)(const char *, FILE *) =
+        pref.rainbow ? (is_byakuren ? &lolbyakuren : &lolfumo) : &fputs;
+    int (*fumo_draw)(const char *, FILE *) =
+        pref.rainbow_fumo ? (is_byakuren ? &lolbyakuren : &lolfumo) : &fputs;
+
+    if (pref.bold) {
+        fputs("\033[1m", stdout);
     }
 
-    if (colour == 1) {
-        SET_COLOR(FUMO_LIST[fm]->color.R, FUMO_LIST[fm]->color.G, FUMO_LIST[fm]->color.B);
-    } else if (colour == 2) {
-        SET_COLOR(custom_colour.R, custom_colour.G, custom_colour.B);
+    if (pref.color == COLOR_ON) {
+        SET_COLOR(FUMO_LIST[pref.fumo]->color);
+    } else if (pref.color == COLOR_CUSTOM) {
+        SET_COLOR(pref.custom_color);
     }
 
     // CYOA mode
-    if (display_name) {
-        char cyoa_str[64];
-        sprintf(cyoa_str, "%s says:\n", FUMO_LIST[fm]->name[0]);
-        fumo_say(cyoa_str, stdout);
+    if (pref.display_name) {
+        fumo_say(FUMO_LIST[pref.fumo]->name[0], stdout);
+        fumo_say(" says:\n", stdout);
     }
 
     // top line
     fumo_say(" ", stdout);
-    for (int i = 0; i < bubble_width; i++) {
+    for (int i = 0; i < bubble_width; i += 1) {
         fumo_say("_", stdout);
     }
     fumo_say("\n", stdout);
@@ -298,8 +323,8 @@ int main(int argc, char **argv)
     int last_section = 0, cur_section = 0;
     char **process = word_vector;
     char *nl;
-    for (int i = 0; i < word_count; i++) {
-        cur_section++;
+    for (int i = 0; i < word_count; i += 1) {
+        cur_section += 1;
         if ((nl = strchr(word_vector[i], '\n')) != NULL || i == word_count - 1) {
             if (nl) {
                 *nl = 0; // strip the last newline of the paragraph
@@ -310,8 +335,8 @@ int main(int argc, char **argv)
                 process,
                 bubble_width - 2,
                 bubble_width,
-                no_wrap,
-                optind != argc,
+                pref.no_wrap,
+                options.optind != argc,
                 fumo_say
             );
             last_section = cur_section;
@@ -321,27 +346,22 @@ int main(int argc, char **argv)
 
     // bottom line
     fumo_say(" ", stdout);
-    for (int i = 0; i < bubble_width; i++) {
+    for (int i = 0; i < bubble_width; i += 1) {
         fumo_say("-", stdout);
     }
 
     // reset color
-    if (colour || (rainbow && !rainbow_fumo)) {
-        RESET_COLOR;
-        if (bold) {
+    if (pref.color || (pref.rainbow && !pref.rainbow_fumo)) {
+        RESET_FORMAT;
+        if (pref.bold) {
             fputs("\033[1m", stdout);
         }
     }
 
-    // fumo!
-    if (rainbow_fumo) {
-        fumo_fumo(fm, &lolfumo);
-    } else {
-        fumo_fumo(fm, &fputs);
-    }
+    fumo_fumo(pref.fumo, fumo_draw);
 
-    if (rainbow_fumo || bold) {
-        RESET_COLOR;
+    if (pref.rainbow_fumo || pref.bold) {
+        RESET_FORMAT;
     }
 
     free(word_vector);

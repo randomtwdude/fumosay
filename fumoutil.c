@@ -6,9 +6,7 @@
 #include "fumo.fumo"
 
 #define MIN(a, b) ((a) > (b) ? (b) : (a))
-#define MIN4(a, b, c, d) (MIN(MIN((a), (b)), MIN((c), (d))))
 
-/* Picks a fumo */
 fumo_who fumo_picker(char *str)
 {
     fumo_who i = 0, fumo = -1;
@@ -35,7 +33,6 @@ fumo_who fumo_picker(char *str)
     return fumo;
 }
 
-/* Set fumo expression, modifies string */
 void fumo_expr(fumo_who fm, char ex, char *custom)
 {
     char *p;
@@ -106,7 +103,6 @@ void fumo_expr(fumo_who fm, char ex, char *custom)
 #undef set_expression
 }
 
-/* Lists all fumos */
 void fumo_list()
 {
     for (int i = 0; i < FUMO_COUNT; i += 1) {
@@ -115,13 +111,26 @@ void fumo_list()
     }
 }
 
-/* fumo ᗜˬᗜ fumo */
 void fumo_fumo(fumo_who fm, int (*fumo_say)(const char *, FILE *))
 {
     fumo_say(FUMO_LIST[fm]->fumo, stdout);
 }
 
-/* Says a message then exits */
+fumo_special fumo_check_special(fumo_who fm)
+{
+    switch (fm) {
+        // the magic numbers are temporary
+        case 55:
+            return SPECIAL_CHIMATA;
+
+        case 60:
+            return SPECIAL_BYAKUREN;
+
+        default:
+            return SPECIAL_NONE;
+    }
+}
+
 void fumo_panic(char *message, char expr, char *custom_expr)
 {
     fputs(message, stdout);
@@ -136,7 +145,6 @@ void fumo_panic(char *message, char expr, char *custom_expr)
  * This implementation is translated from github.com/heyimalex/bitap
  * #rewriteItInC
  */
-// Give pattern, get bitmasks.
 uint64_t *_get_masks(char *str)
 {
     uint64_t *masks = malloc(ALPHABET * sizeof(uint64_t));
@@ -147,7 +155,7 @@ uint64_t *_get_masks(char *str)
     }
     return masks;
 }
-// Bitap algorithm based on Levenshtein distance, optimized for max_dist = 1 or 2
+
 int _bitap_levenshtein(char *haystack, uint64_t *masks, int pattern_len, int max_dist)
 {
     int score        = 0;
@@ -178,7 +186,7 @@ int _bitap_levenshtein(char *haystack, uint64_t *masks, int pattern_len, int max
     }
     return score;
 }
-// Fuzzy bitap search, max_dist <= 2.
+
 int bitap(char *haystack, char *needle, int max_dist)
 {
     char *pattern = strndup(needle, WORDLEN);
@@ -189,7 +197,6 @@ int bitap(char *haystack, char *needle, int max_dist)
     return score;
 }
 
-// New RNG
 int random_uniform(int num)
 {
     if (num < 1) {

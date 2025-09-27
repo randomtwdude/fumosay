@@ -15,19 +15,18 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-/* How long the longest line should be, accounting for hard newlines */
-int longestLineWidth(int argc, char **argv)
+int longestLineWidth(int count, char **words, int width_limit)
 {
     size_t cur_line = 0, max_line = 0;
     size_t word_len;
-    for (int i = 0; i < argc; i += 1) {
-        word_len = strlen_real(argv[i]);
+    for (int i = 0; i < count; i += 1) {
+        word_len = strlen_real(words[i]);
         cur_line += word_len + 1;
-        if (cur_line > MAX_WIDTH) {
+        if (cur_line > width_limit) {
             max_line = MAX(cur_line - word_len - 1, max_line);
             cur_line = word_len + 1;
         }
-        if (argv[i][strlen(argv[i]) - 1] == '\n') {
+        if (words[i][strlen(words[i]) - 1] == '\n') {
             max_line = MAX(cur_line, max_line);
             cur_line = 0;
         }
@@ -35,7 +34,6 @@ int longestLineWidth(int argc, char **argv)
     return MAX(cur_line, max_line);
 }
 
-/* Print some spaces and the right parenthesis */
 void paddedBreak(int padding, int (*fumo_say)(const char *, FILE *))
 {
     for (int i = 0; i < padding; i += 1) {
@@ -44,7 +42,8 @@ void paddedBreak(int padding, int (*fumo_say)(const char *, FILE *))
     fumo_say(")\n", stdout);
 }
 
-/* Shiny "better" word-wrapping
+/*
+ * Shiny "better" word-wrapping
  * Based on the shortest path algo. (xxyxyz.org/line-breaking)
  */
 void wordWrapper(
@@ -58,9 +57,9 @@ void wordWrapper(
 )
 {
 
-    int *offsets = calloc((count + 1), sizeof(int));
+    int *OFFSETs = calloc((count + 1), sizeof(int));
     for (int i = 1; i < count + 1; i += 1) {
-        offsets[i] = offsets[i - 1] + strlen_real(words[i - 1]);
+        OFFSETs[i] = OFFSETs[i - 1] + strlen_real(words[i - 1]);
     }
 
     int *minima = malloc((count + 1) * sizeof(int));
@@ -71,7 +70,7 @@ void wordWrapper(
     for (int i = 0; i < count; i += 1) {
         int j = i + 1;
         while (j <= count) {
-            int w = offsets[j] - offsets[i] + j - i - 1;
+            int w = OFFSETs[j] - OFFSETs[i] + j - i - 1;
             if (w > width) {
                 break;
             }
@@ -122,12 +121,11 @@ void wordWrapper(
 
     // clean
     free(intervals);
-    free(offsets);
+    free(OFFSETs);
     free(minima);
     free(breaks);
 }
 
-/* getline() but this one is mine, also ignores CR */
 char *getInput(FILE *st, size_t size)
 {
     size_t len = 0;
@@ -155,7 +153,6 @@ char *getInput(FILE *st, size_t size)
     return realloc(str, len);
 }
 
-/* Replace tabs with spaces in one word, modifies token */
 char *replaceTab(char *token, short tabstop)
 {
     int size_byte = strlen(token) + 1;
@@ -171,10 +168,7 @@ char *replaceTab(char *token, short tabstop)
     return token;
 }
 
-/* Splits words if needed, first by white spaces, then by length
- * modifies both _words_ and _count_
- */
-char **splitWords(char **words, int *count)
+char **splitWords(int *count, char **words, int width_limit)
 {
     // first pass: split on whitespaces
     for (int i = 0; i < *count; i += 1) {
@@ -222,9 +216,9 @@ char **splitWords(char **words, int *count)
         }
     }
 
-    // second pass: split on MAX_WIDTH
+    // second pass: split on width_limit
     for (int i = 0; i < *count; i += 1) {
-        if (strlen_real(words[i]) < MAX_WIDTH) {
+        if (strlen_real(words[i]) < width_limit) {
             continue;
         }
         size_t size_byte  = strlen(words[i]);
@@ -232,13 +226,13 @@ char **splitWords(char **words, int *count)
         char *good_breaks = malloc(size_byte);
         u8_grapheme_breaks((const uint8_t *)words[i], size_byte, good_breaks);
 
-        // start looking just before where we could reach max_width
-        for (int j = MAX_WIDTH - 2; j < size_byte; j += 1) {
+        // start looking just before where we could reach width_limit
+        for (int j = width_limit - 2; j < size_byte; j += 1) {
             if (good_breaks[j]) {
                 // we need to insert a 0 for strlen
                 good_breaks[j] = words[i][j];
                 words[i][j]    = 0;
-                if (strlen_real(words[i]) < MAX_WIDTH) {
+                if (strlen_real(words[i]) < width_limit) {
                     chosen_break = j;
                 }
                 words[i][j] = good_breaks[j]; // restore
@@ -312,20 +306,48 @@ static enum esc_st _find_escape_sequences(char c, enum esc_st st)
 }
 
 // we're doing gradients now too
-void rgb_interpolate(color *start, color *end, int *r, int *g, int *b, double f)
+static void
+rgb_interpolate(const color *start, const color *end, short *r, short *g, short *b, double f)
 {
     *r = start->R + (end->R - start->R) * f;
     *g = start->G + (end->G - start->G) * f;
     *b = start->B + (end->B - start->B) * f;
 }
 
-/* lolcat but fumo (rainbow fputs + utf8) */
-int lolfumo(const char *str, FILE *dest)
+// rainbow settings
+#define H_FREQ 0.25 /* how wide the rainbow is */
+#define V_FREQ 0.1  /* how tall the rainbow is */
+#define OFFSET 0.45 /* higher value = more pastel */
+
+static color rainbow(int line, int col, double rainbow_start)
 {
-    static int col = 0, line = 0;
-    double hFreq = 0.25, /* how wide the rainbow is */
-        vFreq    = 0.1,  /* how tall the rainbow is */
-        offset   = 0.45; /* higher value = more pastel */
+    double theta = col * H_FREQ / 5.0 + line * V_FREQ + rainbow_start;
+    color c      = {
+             .R = lrintf(255.0 * (OFFSET + (1.0 - OFFSET) * (0.5 + 0.5 * sin(theta + 0)))),
+             .G = lrintf(255.0 * (OFFSET + (1.0 - OFFSET) * (0.5 + 0.5 * sin(theta + 2 * M_PI / 3)))),
+             .B = lrintf(255.0 * (OFFSET + (1.0 - OFFSET) * (0.5 + 0.5 * sin(theta + 4 * M_PI / 3)))),
+    };
+    return c;
+}
+
+static color rainbow_byakuren(int line, int col, double rainbow_start)
+{
+    // special gradient just for her
+    const color purple = { 185, 120, 235 };
+    const color yellow = { 240, 195, 130 };
+    color c;
+
+    double theta = col * H_FREQ / 5.0 + line * V_FREQ + rainbow_start;
+    theta        = fmodf(theta / 2.0 / M_PI, 2.0f);
+    theta        = theta > 1.0 ? 2.0 - theta : theta;
+
+    rgb_interpolate(&purple, &yellow, &c.R, &c.G, &c.B, theta);
+    return c;
+}
+
+static int _lolfumo_impl(const char *str, FILE *dest, color (*rainbow_make)(int, int, double))
+{
+    static int line = 0, col = 0;
 
     // every rainbow is different
     static double rainbow_start = -1.0;
@@ -353,23 +375,8 @@ int lolfumo(const char *str, FILE *dest)
         }
 
         // get rainbow color
-        int red, green, blue;
-        double theta = col * hFreq / 5.0 + line * vFreq + rainbow_start;
-        if (isByakuren) {
-            // special gradient just for her
-            color purple = { 185, 120, 235 };
-            color yellow = { 240, 195, 130 };
-            theta        = fmodf(theta / 2.0 / M_PI, 2.0f);
-            theta        = theta > 1.0 ? 2.0 - theta : theta;
-            rgb_interpolate(&purple, &yellow, &red, &green, &blue, theta);
-        } else {
-            red = lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 0))));
-            green =
-                lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 2 * M_PI / 3))));
-            blue =
-                lrintf(255.0 * (offset + (1.0 - offset) * (0.5 + 0.5 * sin(theta + 4 * M_PI / 3))));
-        }
-        SET_COLOR(red, green, blue);
+        SET_COLOR(rainbow_make(line, col, rainbow_start));
+
         // print this code point
         for (int j = 0; j < unit_size; j += 1) {
             fputc(str[i + j], dest);
@@ -385,9 +392,9 @@ int lolfumo(const char *str, FILE *dest)
     return i;
 }
 
-/* Takes NULL-terminated UTF-8 strings!
- * Returns the *display width* of the string, ANSI escape codes are taken into account as well
- */
+int lolfumo(const char *str, FILE *dest) { return _lolfumo_impl(str, dest, &rainbow); }
+int lolbyakuren(const char *str, FILE *dest) { return _lolfumo_impl(str, dest, &rainbow_byakuren); }
+
 int strlen_real(char *str)
 {
     int length        = 0;

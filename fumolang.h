@@ -10,12 +10,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define SET_COLOR(r, g, b) printf("\033[38;2;%hd;%hd;%hdm", r, g, b);
-
-// in fumosay.c
-extern int MAX_WIDTH;
-extern bool isByakuren;
-
 // Marisa borrowed the ANSI code from github.com/jaseg/lolcat
 enum esc_st {
     ST_NONE = 0,
@@ -28,8 +22,17 @@ enum esc_st {
     NUM_ST
 };
 
-int longestLineWidth(int argc, char **argv);
+// How long the longest line should be, accounting for hard newlines
+int longestLineWidth(int count, char **words, int width_limit);
+
+// Splits words if needed, first by white spaces, then by length
+// modifies both _words_ and _count_
+char **splitWords(int *count, char **words, int width_limit);
+
+// prints some spaces and the right parenthesis
 void paddedBreak(int padding, int (*fumo_say)(const char *, FILE *));
+
+// wraps and prints words
 void wordWrapper(
     int count,
     char **words,
@@ -40,12 +43,18 @@ void wordWrapper(
     int (*fumo_say)(const char *, FILE *)
 );
 
-enum esc_st find_escape_sequences(char c, enum esc_st st);
-void rgb_interpolate(color *start, color *end, int *r, int *g, int *b, double f);
+/* lolcat but fumo (rainbow fputs + utf8) */
 int lolfumo(const char *str, FILE *dest);
+int lolbyakuren(const char *str, FILE *dest);
+
+// Takes NULL-terminated UTF-8 strings!
+// Returns the display width of the string, ANSI escape codes are handled.
 int strlen_real(char *str);
+
+// reads a line, ignoring carriage returns '\r' for Windows
 char *getInput(FILE *st, size_t size);
+
+// Replace tabs with spaces in one word, reallocates _token_
 char *replaceTab(char *token, short tabstop);
-char **splitWords(char **words, int *count);
 
 #endif
